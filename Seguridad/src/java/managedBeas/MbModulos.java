@@ -243,7 +243,7 @@ public class MbModulos implements Serializable {
 
     private ArrayList<SelectItem> dameModuloMenu() {
         ArrayList<ModuloMenu> listaModuloMenu = new ArrayList<ModuloMenu>();
-        ArrayList<SelectItem> m2 = new ArrayList<>();
+        ArrayList<SelectItem> m2 = new ArrayList<SelectItem>();
 
         try {
             DaoPer daoPermiso = new DaoPer();
