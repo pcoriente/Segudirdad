@@ -41,7 +41,7 @@ public class MbModulos implements Serializable {
 //    este objeto nuevo es para el seleconemenu de las altas de SubMenus
 //    Este objeto nos siver para dar de altas de subMenu
     private ModuloSubMenu AltasSubMenu = new ModuloSubMenu();
-    private List<SelectItem> moduloSubMenuCmb2 = new ArrayList<>();
+    private List<SelectItem> moduloSubMenuCmb2 = new ArrayList<SelectItem>();
     private ModuloMenu moduloMenu = new ModuloMenu();
     private ModuloSubMenu moduloSubMenu = new ModuloSubMenu();
     private ModuloMenu m = new ModuloMenu();
@@ -167,7 +167,7 @@ public class MbModulos implements Serializable {
         try {
             int id = moduloMenucmb.getIdMenu();
             DaoPer daoPermisos = new DaoPer();
-            ArrayList<ModuloSubMenu> moduloSubMenu = new ArrayList<>();
+            ArrayList<ModuloSubMenu> moduloSubMenu = new ArrayList<ModuloSubMenu>();
             moduloSubMenu = daoPermisos.dameSubMenus(id);
             ModuloSubMenu subMenu = new ModuloSubMenu();
             subMenu.setIdSubMenu(0);
@@ -242,7 +242,7 @@ public class MbModulos implements Serializable {
     }
 
     private ArrayList<SelectItem> dameModuloMenu() {
-        ArrayList<ModuloMenu> listaModuloMenu = new ArrayList<>();
+        ArrayList<ModuloMenu> listaModuloMenu = new ArrayList<ModuloMenu>();
         ArrayList<SelectItem> m2 = new ArrayList<>();
 
         try {
