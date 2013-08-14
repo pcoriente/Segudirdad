@@ -543,7 +543,7 @@ public class DaoPer {
 
     public ArrayList<ModuloMenu> dameMOdulosMenu() throws SQLException {
         String sql = "SELECT * FROM modulosMenus";
-        ArrayList<ModuloMenu> modulosMenus = new ArrayList<>();
+        ArrayList<ModuloMenu> modulosMenus = new ArrayList<ModuloMenu>();
 
         Connection cn = ds.getConnection();
         PreparedStatement ps = cn.prepareStatement(sql);

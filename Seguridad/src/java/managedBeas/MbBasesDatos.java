@@ -87,7 +87,7 @@ public class MbBasesDatos implements Serializable {
     }
 
     public List<SelectItem> getListaBaseDatos() {
-        listaBaseDatos = new ArrayList<>();
+        listaBaseDatos = new ArrayList<SelectItem>();
         try {
             listaBaseDatos = dameBd();
         } catch (SQLException ex) {

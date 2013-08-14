@@ -37,7 +37,7 @@ public class MbModulos implements Serializable {
     private Modulo moduloCmb = new Modulo();
     private ModuloMenu moduloMenucmb = new ModuloMenu();
     private ModuloSubMenu moduloSubMenuCmb = new ModuloSubMenu();
-    private List<SelectItem> moduloMenuCmb2 = new ArrayList<>();
+    private List<SelectItem> moduloMenuCmb2 = new ArrayList<SelectItem>();
 //    este objeto nuevo es para el seleconemenu de las altas de SubMenus
 //    Este objeto nos siver para dar de altas de subMenu
     private ModuloSubMenu AltasSubMenu = new ModuloSubMenu();
