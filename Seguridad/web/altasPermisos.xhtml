@@ -1,0 +1,298 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <div style="width: 950px; margin: auto">
+                <h:graphicImage  library="images" name="encabezado.jpg" /> 
+                <center>
+                    <p:panel header="Panel de Administración" style="width: 700px" >
+                        <p:growl id="growl" showDetail="true" life="3000" />
+                        <p:menubar id="Menu">  
+                            <p:menuitem value="Base de Datos" onclick="agregarBds.show();" icon="ui-icon-disk" />
+                            <p:menuitem value="Perfiles" icon="ui-icon-person" actionListener="#{mbSeguridad.limpiarPerfiles()}" process="listaPerfiles"  onclick="perfil.show();"/>
+                            <p:menuitem value="Usuarios" actionListener="#{mbSeguridad.limpiarUsuarios()}" update="Menu" icon="ui-icon-person" disabled="#{mbSeguridad.mbBasesDatos.baseDatos.idBaseDatos==0 || mbSeguridad.mbPerfiles.perfilCmb.idPerfiles==0}" onclick="dlg.show();"/>
+                            <p:submenu  icon="ui-icon-wrench"> 
+                                <p:menuitem value="Modulos Menus" process="@this modulos" actionListener="#{mbSeguridad.limpiarMenus()}"  onclick="agrgarModuloMenu.show();" icon="ui-icon-document">
+                                </p:menuitem>  
+                                <p:menuitem value="Modulos SubMenus"  onclick="agregarModuloSubMenu.show();" icon="ui-icon-document"/>  
+                                <p:menuitem  value="Modulos" actionListener="#{mbSeguridad.limpiarModulos()}" onclick="modulo.show();" icon="ui-icon-document"/>  
+                                <p:menuitem value="Acciones" disabled="#{mbSeguridad.mbModulos.moduloCmb.idModulo== 0}" onclick="acciones.show();" icon="ui-icon-document"/>  
+                            </p:submenu>  
+                            <p:menuitem  icon="ui-icon-home"/>
+                        </p:menubar> 
+                        <!--<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true"/>-->
+                        <br></br>
+                        <h:panelGrid columns="2">
+                            <p:outputLabel>Base de Datos:</p:outputLabel>
+                            <p:selectOneMenu id="listaBd" style="width: 230px" 
+                                             value="#{mbSeguridad.mbBasesDatos.baseDatos}">
+                                <f:selectItems value="#{mbSeguridad.mbBasesDatos.listaBaseDatos}"/>
+                                <f:converter converterId="traerBd"/>
+                                <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
+                                        event="change" 
+                                        update="PickAcciones  Menu"
+                                        process="@this listaPerfiles modulos perfilNom"/>
+
+                            </p:selectOneMenu>
+                            <p:outputLabel> Perfiles:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p:outputLabel>
+                            <p:selectOneMenu  
+                                id="listaPerfiles" style="width: 230px"
+                                value="#{mbSeguridad.mbPerfiles.perfilCmb}">
+                                <f:selectItems value="#{mbSeguridad.mbPerfiles.listaPerfiles}" />
+                                <f:converter converterId="traerPerfil"/>
+                                <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
+                                        event="change" 
+                                        update="PickAcciones  Menu  perfilNom"
+                                        process="@this modulos listaBd"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel>Modulo:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p:outputLabel>
+                            <p:selectOneMenu 
+                                id="modulos" 
+                                style="width: 230px"
+                                value="#{mbSeguridad.mbModulos.moduloCmb}">
+                                <f:selectItems value="#{mbSeguridad.mbModulos.listaModulos}"/>
+                                <f:converter converterId="traerModulos"/>
+                                <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
+                                        event="change" 
+                                        update="PickAcciones Menu perfilNom"
+                                        process="@this listaPerfiles listaBd"/>
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+                        <p:pickList  
+                            id="PickAcciones"
+                            style="width: 200px"
+                            effect="slide"
+                            value="#{mbSeguridad.mbAcciones.pickAcciones}"
+                            var="ListaAcciones"
+                            itemLabel="#{ListaAcciones}"
+                            itemValue="#{ListaAcciones}"
+                            showCheckbox="true"
+                            >
+                            <f:facet name="sourceCaption">Disponibles</f:facet>
+                            <f:facet name="targetCaption">Seleccionados</f:facet>
+                            <f:converter converterId="traerAcciones"/>
+                        </p:pickList>
+                        <p:commandButton 
+                            id="btnGuardar"
+                            value="Guardar"
+                            action="#{mbSeguridad.guardarValores()}"
+                            icon="ui-icon-disk"
+                            update="growl"
+                            />
+                        <p:commandButton
+                            value="Cancelar"
+                            action="#{mbSeguridad.cancelarUsuarioPerfil()}"
+                            update="growl modulos listaPerfiles listaBd PickAcciones Menu"
+                            icon="ui-icon-cancel"
+                            />
+                    </p:panel>
+                </center>
+                <p:dialog modal="true" header="Altas de Usuarios" widgetVar="dlg" hideEffect="explode">
+                    <br></br>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Perfil"/>
+                        <p:outputLabel  id="perfilNom" value="#{mbSeguridad.mbPerfiles.perfil.perfil}"/>
+                        <p:outputLabel value="Usuario"/>
+                        <p:inputText  style="width: 150px" id="usuario" value="#{mbSeguridad.mbUsuarios.usuario.usuario}"/>
+                        <p:outputLabel value="Login"/>
+                        <p:inputText style="width: 150px" id="login" value="#{mbSeguridad.mbUsuarios.usuario.login}"/>
+                        <p:outputLabel value="Password"/>
+                        <p:password  style="width: 150px" id="password" value="#{mbSeguridad.mbUsuarios.usuario.password}"/>
+                        <p:outputLabel value="Correo" />
+                        <p:inputText  style="width:150px" id="correo"  value="#{mbSeguridad.mbUsuarios.usuario.email}"/>
+                    </h:panelGrid>
+                    <p:commandButton 
+                        value="Guardar"
+                        icon="ui-icon-disk"
+                        action="#{mbSeguridad.insertarDatos()}"
+                        oncomplete="altasUsuarios(xhr, status, args);"
+                        update="usuario login password correo growl"
+                        />
+                </p:dialog>
+                <p:dialog  modal="true" header="Altas de Modulos" widgetVar="modulo" hideEffect="explode">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Modulo: "/>
+                        <p:inputText id="modulo" value="#{mbSeguridad.mbModulos.modulo.modulo}"/>
+                        <p:outputLabel value="Url: "/>
+                        <p:inputText id="url" value="#{mbSeguridad.mbModulos.modulo.url}"/>
+                        <p:outputLabel value="Modulo Menu: "/>
+                        <p:selectOneMenu  style="width: 210px" id="moduloMenu" value="#{mbSeguridad.mbModulos.moduloMenucmb}">
+                            <f:selectItems value="#{mbSeguridad.mbModulos.moduloMenuCmb2}"/>
+                            <f:converter converterId="traerModulosMenus"/>
+                            <p:ajax event="change" 
+                                    listener="#{mbSeguridad.mbModulos.dameValoresModuloChange()}"
+                                    update="subMenu"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Modulo SubMenu: "/>
+                        <p:selectOneMenu style="width: 210px" id="subMenu" value="#{mbSeguridad.mbModulos.moduloSubMenuCmb}">
+                            <f:selectItems value="#{mbSeguridad.mbModulos.moduloSubMenuCmb2}"/>
+                            <f:converter converterId="traerModulosSubMenus"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <p:commandButton 
+                        icon="ui-icon-disk"
+                        value="Guardar"
+                        action="#{mbSeguridad.guardarValoresModulo()}" 
+                        update="growl modulos  Menu modulo url moduloMenu subMenu"
+                        oncomplete="altasModulo(xhr, status, args);"
+                        />
+                </p:dialog>
+                <p:dialog  modal="true" header="Altas de Perfiles" widgetVar="perfil" hideEffect="explode">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Perfil"/>
+                        <p:inputText id="nombrePerfil" value="#{mbSeguridad.mbPerfiles.perfil.perfil}"/>
+                    </h:panelGrid>
+                    <p:commandButton value="Guardar" 
+                                     icon="ui-icon-disk"
+                                     action="#{mbSeguridad.guardarPerfil()}"
+                                     update="growl listaPerfiles nombrePerfil perfilNom Menu PickAcciones"
+                                     oncomplete="altasPerfiles(xhr, status, args);"/>
+                </p:dialog>
+                <p:dialog  modal="true" 
+                           header="Acciones del Modulo"
+                           widgetVar="acciones" 
+                           hideEffect="explode"
+                           >
+
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Accion"/>
+                        <p:inputText id="accion" value="#{mbSeguridad.mbAcciones.acion.accion}" />
+                        <p:outputLabel value="Id Boton"/>
+                        <p:inputText id="idBoton" value="#{mbSeguridad.mbAcciones.acion.idBoton}"/>
+                    </h:panelGrid>
+                    <p:commandButton   value="Guardar" 
+                                       icon="ui-icon-disk"
+                                       actionListener="#{mbSeguridad.guardarAcciones()}"
+                                       update="PickAcciones accion idBoton  modulos growl"
+                                       oncomplete="altasAcciones(xhr, status, args);"/>
+
+                </p:dialog>
+                <p:dialog  modal="true" header="Base de Datos Del Servidor"
+                           widgetVar="agregarBds"
+                           hideEffect="explode">
+                    <p:pickList  
+                        id="PickModulos"
+                        style="width: 200px"
+                        effect="slide"
+                        value="#{mbSeguridad.mbBasesDatos.pickBd}"
+                        var="pickBd"
+                        itemLabel="#{pickBd}"
+                        itemValue="#{pickBd}">
+                        <f:facet name="sourceCaption">Disponibles</f:facet>
+                        <f:facet name="targetCaption">Seleccionados</f:facet>
+                        <f:converter converterId="traerBdPickListNUevo"/>
+                    </p:pickList>
+                    <p:commandButton value="Guardar"
+                                     icon="ui-icon-disk"
+                                     actionListener="#{mbSeguridad.mbBasesDatos.dameBdsPickList()}"
+                                     update="growl listaBd"
+                                     oncomplete="altasBds(xhr, status, args);"
+                                     />
+                </p:dialog >
+
+                <p:dialog header="Altas Menus" 
+                          widgetVar="agrgarModuloMenu"
+                          hideEffect="explode">
+                    <p:outputLabel value="Menu:"/>
+                    <p:inputText value="#{mbSeguridad.mbModulos.moduloMenu.menu}"/>
+                    <br></br>
+                    <p:commandButton value="Guardar"
+                                     icon="ui-icon-disk"
+                                     actionListener="#{mbSeguridad.guardarModuloMenu()}"
+                                     update="growl cmbModuloSubMenucmbMenu moduloMenu"
+                                     oncomplete="altasModuloMenu(xhr, status, args)"/>
+                </p:dialog>
+
+                <p:dialog header="Altas Submenus" 
+                          widgetVar="agregarModuloSubMenu"
+                          hideEffect="explode">
+                    <h:panelGrid columns="2"> 
+                        <p:outputLabel value="Nombre SubMenu:"/>
+                        <p:inputText value="#{mbSeguridad.sub.subMenu}"/>
+                        <p:outputLabel value="Menu"/>
+                        <p:selectOneMenu style="width: 210px" id="cmbModuloSubMenucmbMenu" 
+                                         value="#{mbSeguridad.mbModulos.m}">
+                            <f:selectItems value="#{mbSeguridad.mbModulos.moduloMenuCmb2}"/>
+                            <f:converter converterId="traerModulosMenus"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <p:commandButton value="Guardar"
+                                     icon="ui-icon-disk"
+                                     actionListener="#{mbSeguridad.guardarModuloSubMenu()}"
+                                     update="growl"
+                                     oncomplete="altasModuloSubMenu(xhr, status, args)"/>
+                </p:dialog>
+            </div>
+        </h:form>
+        <script type="text/javascript">
+                                function altasAcciones(xhr, status, args) {
+                                    if (args.validationFailed || !args.loggedIn) {
+                                        acciones.jq.effect("shake", {times: 5}, 100);
+                                    }
+                                    else {
+                                        acciones.hide();
+                                    }
+                                }
+                                function altasBds(xhr, status, args) {
+                                    agregarBds.hide();
+                                }
+
+                                function altasPerfiles(xhr, status, args) {
+                                    if (args.validationFailed || !args.loggedIn) {
+                                        perfil.jq.effect("shake", {times: 5}, 100);
+                                    }
+                                    else {
+                                        perfil.hide();
+                                    }
+                                }
+                                function altasModulo(xhr, status, args) {
+                                    if (args.validationFailed || !args.loggedIn) {
+                                        modulo.jq.effect("shake", {times: 5}, 100);
+                                    }
+                                    else {
+                                        modulo.hide();
+                                    }
+
+                                }
+                                function altasUsuarios(xhr, status, args) {
+                                    if (args.validationFailed || !args.loggedIn) {
+                                        dlg.jq.effect("shake", {times: 5}, 100);
+                                    }
+                                    else {
+                                        dlg.hide();
+                                    }
+                                }
+
+
+                                function altasModuloMenu(xhr, status, args) {
+                                    if (args.validationFailed || !args.loggedIn) {
+                                        agrgarModuloMenu.jq.effect("shake", {times: 5}, 100);
+                                    }
+                                    else {
+                                        agrgarModuloMenu.hide();
+                                    }
+                                }
+
+                                function altasModuloSubMenu(xhr, status, args) {
+                                    if (args.validationFailed || !args.loggedIn) {
+                                        agregarModuloSubMenu.jq.effect("shake", {times: 5}, 100);
+                                    }
+                                    else {
+                                        agregarModuloSubMenu.hide();
+                                    }
+                                }
+
+
+
+        </script>
+
+    </h:body>
+</html>
+
