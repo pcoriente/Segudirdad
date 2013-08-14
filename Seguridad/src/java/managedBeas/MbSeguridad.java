@@ -193,10 +193,11 @@ public class MbSeguridad implements Serializable {
                 msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese un Nombre de Perfil");
             } else {
                 mbUsuarios.getUsuario().getIdUsuario();
+                String perfil = mbPerfiles.getPerfil().getPerfil();
                 int identity = daoPer.insertarPerfil(mbPerfiles.getPerfil());
                 dameModulosAcciones(identity);
                 mbPerfiles.getPerfilCmb().setIdPerfiles(identity);
-                mbPerfiles.getPerfil().setPerfil(mbPerfiles.getPerfil().getPerfil());
+                mbPerfiles.getPerfil().setPerfil(perfil);
                 loggedIn = true;
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Nuevo Perfil Disponible");
             }
@@ -389,8 +390,11 @@ public class MbSeguridad implements Serializable {
     }
 
     public void limpiarPerfiles() {
-        if (mbPerfiles.getPerfilCmb().getIdPerfiles() > 0) {
+        if (mbPerfiles.getPerfilCmb().getIdPerfiles() == 0) {
             mbPerfiles = new MbPerfiles();
+        } else {
+            String perfil = mbPerfiles.getPerfilCmb().getPerfil();
+            mbPerfiles.getPerfil().setPerfil(perfil);
         }
     }
 
@@ -398,6 +402,16 @@ public class MbSeguridad implements Serializable {
         String perfil = mbPerfiles.getPerfilCmb().getPerfil();
         mbPerfiles.getPerfil().setPerfil(null);
         mbUsuarios = new MbUsuarios();
+    }
+
+    public void limpiarSubModulos() {
+        mbModulos = new MbModulos();
+        sub = new ModuloSubMenu();
+    }
+
+    public String home() {
+        String pagina = "index.xhtml";
+        return pagina;
     }
 
     public MbBasesDatos getMbBasesDatos() {

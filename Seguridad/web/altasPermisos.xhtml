@@ -16,16 +16,15 @@
                         <p:growl id="growl" showDetail="true" life="3000" />
                         <p:menubar id="Menu">  
                             <p:menuitem value="Base de Datos" onclick="agregarBds.show();" icon="ui-icon-disk" />
-                            <p:menuitem value="Perfiles" icon="ui-icon-person" actionListener="#{mbSeguridad.limpiarPerfiles()}" process="listaPerfiles"  onclick="perfil.show();"/>
-                            <p:menuitem value="Usuarios" actionListener="#{mbSeguridad.limpiarUsuarios()}" update="Menu" icon="ui-icon-person" disabled="#{mbSeguridad.mbBasesDatos.baseDatos.idBaseDatos==0 || mbSeguridad.mbPerfiles.perfilCmb.idPerfiles==0}" onclick="dlg.show();"/>
+                            <p:menuitem value="Perfiles" icon="ui-icon-person" actionListener="#{mbSeguridad.limpiarPerfiles()}" update="nombrePerfil" process="@this listaPerfiles"  onclick="perfil.show();"/>
+                            <p:menuitem value="Usuarios" update="Menu" icon="ui-icon-person" disabled="#{mbSeguridad.mbBasesDatos.baseDatos.idBaseDatos==0 || mbSeguridad.mbPerfiles.perfilCmb.idPerfiles==0}" onclick="dlg.show();"/>
                             <p:submenu  icon="ui-icon-wrench"> 
-                                <p:menuitem value="Modulos Menus" process="@this modulos" actionListener="#{mbSeguridad.limpiarMenus()}"  onclick="agrgarModuloMenu.show();" icon="ui-icon-document">
-                                </p:menuitem>  
-                                <p:menuitem value="Modulos SubMenus"  onclick="agregarModuloSubMenu.show();" icon="ui-icon-document"/>  
+                                <p:menuitem value="Modulos Menus" process="@this modulos" actionListener="#{mbSeguridad.limpiarMenus()}" update="modulosMenu" onclick="agrgarModuloMenu.show();" icon="ui-icon-document"/>
+                                <p:menuitem value="Modulos SubMenus"  process="@this" actionListener="#{mbSeguridad.limpiarSubModulos()}" onclick="agregarModuloSubMenu.show();" icon="ui-icon-document" update="subMenuNom cmbModuloSubMenucmbMenu"/>  
                                 <p:menuitem  value="Modulos" actionListener="#{mbSeguridad.limpiarModulos()}" onclick="modulo.show();" icon="ui-icon-document"/>  
                                 <p:menuitem value="Acciones" disabled="#{mbSeguridad.mbModulos.moduloCmb.idModulo== 0}" onclick="acciones.show();" icon="ui-icon-document"/>  
                             </p:submenu>  
-                            <p:menuitem  icon="ui-icon-home"/>
+                            <p:menuitem  icon="ui-icon-home"  url="index.xhtml"/>
                         </p:menubar> 
                         <!--<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true"/>-->
                         <br></br>
@@ -94,7 +93,7 @@
                             />
                     </p:panel>
                 </center>
-                <p:dialog modal="true" header="Altas de Usuarios" widgetVar="dlg" hideEffect="explode">
+                <p:dialog modal="true" header="Altas de Usuarios" widgetVar="dlg" hideEffect="explode" showEffect="explode">
                     <br></br>
                     <h:panelGrid columns="2">
                         <p:outputLabel value="Perfil"/>
@@ -116,7 +115,7 @@
                         update="usuario login password correo growl"
                         />
                 </p:dialog>
-                <p:dialog  modal="true" header="Altas de Modulos" widgetVar="modulo" hideEffect="explode">
+                <p:dialog showEffect="explode" modal="true" header="Altas de Modulos" widgetVar="modulo" hideEffect="explode">
                     <h:panelGrid columns="2">
                         <p:outputLabel value="Modulo: "/>
                         <p:inputText id="modulo" value="#{mbSeguridad.mbModulos.modulo.modulo}"/>
@@ -144,7 +143,11 @@
                         oncomplete="altasModulo(xhr, status, args);"
                         />
                 </p:dialog>
-                <p:dialog  modal="true" header="Altas de Perfiles" widgetVar="perfil" hideEffect="explode">
+                <p:dialog  modal="true"
+                           showEffect="explode"
+                           header="Altas de Perfiles" 
+                           widgetVar="perfil" 
+                           hideEffect="explode">
                     <h:panelGrid columns="2">
                         <p:outputLabel value="Perfil"/>
                         <p:inputText id="nombrePerfil" value="#{mbSeguridad.mbPerfiles.perfil.perfil}"/>
@@ -152,13 +155,14 @@
                     <p:commandButton value="Guardar" 
                                      icon="ui-icon-disk"
                                      action="#{mbSeguridad.guardarPerfil()}"
-                                     update="growl listaPerfiles nombrePerfil perfilNom Menu PickAcciones"
+                                     update="growl listaPerfiles nombrePerfil  Menu PickAcciones perfilNom"
                                      oncomplete="altasPerfiles(xhr, status, args);"/>
                 </p:dialog>
                 <p:dialog  modal="true" 
                            header="Acciones del Modulo"
                            widgetVar="acciones" 
                            hideEffect="explode"
+                           showEffect="explode"
                            >
 
                     <h:panelGrid columns="2">
@@ -176,7 +180,8 @@
                 </p:dialog>
                 <p:dialog  modal="true" header="Base de Datos Del Servidor"
                            widgetVar="agregarBds"
-                           hideEffect="explode">
+                           hideEffect="explode"
+                           showEffect="explode">
                     <p:pickList  
                         id="PickModulos"
                         style="width: 200px"
@@ -199,9 +204,10 @@
 
                 <p:dialog header="Altas Menus" 
                           widgetVar="agrgarModuloMenu"
-                          hideEffect="explode">
+                          hideEffect="explode"
+                          showEffect="explode">
                     <p:outputLabel value="Menu:"/>
-                    <p:inputText value="#{mbSeguridad.mbModulos.moduloMenu.menu}"/>
+                    <p:inputText id="modulosMenu" value="#{mbSeguridad.mbModulos.moduloMenu.menu}"/>
                     <br></br>
                     <p:commandButton value="Guardar"
                                      icon="ui-icon-disk"
@@ -212,10 +218,12 @@
 
                 <p:dialog header="Altas Submenus" 
                           widgetVar="agregarModuloSubMenu"
-                          hideEffect="explode">
+                          hideEffect="explode"
+                          showEffect="explode"
+                          modal="true">
                     <h:panelGrid columns="2"> 
                         <p:outputLabel value="Nombre SubMenu:"/>
-                        <p:inputText value="#{mbSeguridad.sub.subMenu}"/>
+                        <p:inputText id="subMenuNom" value="#{mbSeguridad.sub.subMenu}"/>
                         <p:outputLabel value="Menu"/>
                         <p:selectOneMenu style="width: 210px" id="cmbModuloSubMenucmbMenu" 
                                          value="#{mbSeguridad.mbModulos.m}">

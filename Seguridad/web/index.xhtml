@@ -1,24 +1,40 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
     <h:head>
-        <title>Facelet Title</title>
+        <title>ENTRADA AL BDS</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
     </h:head>
-    <h:body>
-        <h:form>
-            <p:menubar id="Menu">  
-                <p:menuitem value="Base de Datos" url="http://www.primefaces.org"  />
-                <p:menuitem value="Perfiles" url="http://www.primefaces.org" />
-                <p:menuitem value="Usuarios" url="http://www.primefaces.org" />
-                <p:submenu  icon="ui-icon-gear">  
-                    <p:menuitem  value="Modulos" actionListener="#{menuBean.save}" icon="ui-icon-disk" />  
-                    <p:menuitem value="Acciones" actionListener="#{menuBean.update}" icon="ui-icon-arrowrefresh-1-w" />  
-                </p:submenu>  
-            </p:menubar> 
-        </h:form>
-    </h:body>
-</html>
+    <body>
+        <div id="wrapper" align="center">
+            <div id="content" align="center"  >
+                <!--   CAMBIAR DE AQUI EN ADELANTE  -->
+                <div style="width: 960px">
+                    <h:graphicImage  library="images" name="encabezado.jpg" />
+                    <p:panel header="CONTROL DE ACCESO: PANEL ADMINISTRATIVO" style="width: 60%;  ">
+                        <h:form>
+                            <center> 
+                                <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />  
+                                <h:panelGrid  columns="2" style="width: 50%;" >
+                                    <h:outputText  value="Password: " />
+                                    <p:password   id="password"
+                                                  value="#{mbLogin.login.password}"
+                                                  feedback="true" /> 
+                                    <center>
+                                        <p:commandButton id="boton"
+                                                         value="Acceder"
+                                                         action="#{mbLogin.validarLogin()}"
+                                                         ajax="false"/>
+                                    </center>
+                                </h:panelGrid> 
+                            </center>
+                        </h:form>
 
+                    </p:panel>
+                </div> 
+            </div>
+        </div>
+    </body>
+</html>
