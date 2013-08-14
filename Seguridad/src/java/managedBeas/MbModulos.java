@@ -222,7 +222,7 @@ public class MbModulos implements Serializable {
     }
 
     private ArrayList<SelectItem> dameModulosMenu() {
-        ArrayList<SelectItem> modulosMenu = new ArrayList<>();
+        ArrayList<SelectItem> modulosMenu = new ArrayList<SelectItem>();
         try {
             ModuloMenu dModulosMenu = new ModuloMenu();
             dModulosMenu.setIdMenu(0);
