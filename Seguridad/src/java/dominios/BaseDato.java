@@ -5,7 +5,6 @@
 package dominios;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  *
