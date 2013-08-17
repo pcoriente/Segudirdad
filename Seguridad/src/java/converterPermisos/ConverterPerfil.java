@@ -35,7 +35,7 @@ public class ConverterPerfil implements Converter {
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
         Perfil p = (Perfil) value;
-        String id = Integer.toString(p.getIdPerfiles());
+        String id = Integer.toString(p.getIdPerfil());
         return id;
 
     }

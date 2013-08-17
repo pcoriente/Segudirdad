@@ -12,6 +12,7 @@ import dominios.Modulo;
 import dominios.ModuloMenu;
 import dominios.ModuloSubMenu;
 import dominios.Perfil;
+import dominios.PerfilesAcseso;
 import dominios.TablaAccion;
 import dominios.UsuarioPerfil;
 import java.sql.CallableStatement;
@@ -28,6 +29,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import managedBeas.MbUsuarios;
 import utilerias.Utilerias;
 
 /**
@@ -61,15 +63,20 @@ public class DaoPer {
         String sql = "SELECT * FROM usuarios";
         Connection cn = ds.getConnection();
         PreparedStatement ps = cn.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            DominioUsuario d = new DominioUsuario();
-            d.setIdUsuario(rs.getInt("idUsuario"));
-            d.setUsuario(rs.getString("usuario"));
-            d.setPassword(rs.getString("password"));
-            usuarios.add(d);
+        try {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                DominioUsuario d = new DominioUsuario();
+                d.setIdUsuario(rs.getInt("idUsuario"));
+                d.setUsuario(rs.getString("usuario"));
+                d.setLogin(rs.getString("login"));
+                d.setPassword(rs.getString("password"));
+                usuarios.add(d);
+            }
+        } catch (Exception e) {
+        } finally {
+            cn.close();
         }
-        cn.close();
         return usuarios;
     }
 
@@ -107,9 +114,9 @@ public class DaoPer {
             while (rs.next()) {
                 identidad = rs.getInt("indentidad");
             }
-            
-            
-            
+
+
+
             insertarAcceso(identidad, bd, perfil);
 
 
@@ -261,7 +268,7 @@ public class DaoPer {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Perfil p = new Perfil();
-                p.setIdPerfiles(rs.getInt("idPerfil"));
+                p.setIdPerfil(rs.getInt("idPerfil"));
                 p.setPerfil(rs.getString("perfil"));
                 perfil.add(p);
             }
@@ -280,8 +287,24 @@ public class DaoPer {
         try {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                p.setIdPerfiles(rs.getInt("idPerfil"));
+                p.setIdPerfil(rs.getInt("idPerfil"));
                 p.setPerfil(rs.getString("perfil"));
+            }
+        } finally {
+            cn.close();
+        }
+        return p;
+    }
+
+    public PerfilesAcseso damePerfilUsuario(int id) throws SQLException {
+        Connection cn = ds.getConnection();
+        PerfilesAcseso p = new PerfilesAcseso();
+        String sql = "SELECT * FROM accesos WHERE idUsuario =" + id;
+        PreparedStatement ps = cn.prepareStatement(sql);
+        try {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                p.setIdPerfil(rs.getInt("idPerfil"));
             }
         } finally {
             cn.close();
@@ -448,7 +471,7 @@ public class DaoPer {
     }
 
     public void ActualizarPerfiles(Perfil perfil) throws SQLException {
-        String sql = "UPDATE perfiles set perfil ='" + perfil.getPerfil() + "' WHERE idPerfil=" + perfil.getIdPerfiles();
+        String sql = "UPDATE perfiles set perfil ='" + perfil.getPerfil() + "' WHERE idPerfil=" + perfil.getIdPerfil();
         Connection cn = ds.getConnection();
         PreparedStatement ps = cn.prepareStatement(sql);
         try {
@@ -640,5 +663,17 @@ public class DaoPer {
             cn.close();
         }
 
+    }
+
+    public void ActualizarUsuario(MbUsuarios mbUsuarios) throws SQLException {
+        String sqlActualizarUsaurioPerfil = "UPDATE accesos SET idPerfil ='" + mbUsuarios.getP2().getIdPerfil()
+                + "' WHERE idUsuario =" + mbUsuarios.getUsuarioCmb().getIdUsuario();
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            st.executeUpdate(sqlActualizarUsaurioPerfil);
+        } finally {
+            cn.close();
+        }
     }
 }

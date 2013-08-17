@@ -36,6 +36,7 @@ public class MbModulos implements Serializable {
     private Modulo modulo = new Modulo();
     private Modulo moduloCmb = new Modulo();
     private ModuloMenu moduloMenucmb = new ModuloMenu();
+    private ModuloMenu moduloMenucmb2 = new ModuloMenu();
     private ModuloSubMenu moduloSubMenuCmb = new ModuloSubMenu();
     private List<SelectItem> moduloMenuCmb2 = new ArrayList<SelectItem>();
 //    este objeto nuevo es para el seleconemenu de las altas de SubMenus
@@ -45,9 +46,18 @@ public class MbModulos implements Serializable {
     private ModuloMenu moduloMenu = new ModuloMenu();
     private ModuloSubMenu moduloSubMenu = new ModuloSubMenu();
     private ModuloMenu m = new ModuloMenu();
+    ModuloMenu modu = new ModuloMenu();
 
     public ModuloMenu getM() {
         return m;
+    }
+
+    public ModuloMenu getModuloMenucmb2() {
+        return moduloMenucmb2;
+    }
+
+    public void setModuloMenucmb2(ModuloMenu moduloMenucmb2) {
+        this.moduloMenucmb2 = moduloMenucmb2;
     }
 
     public void setM(ModuloMenu m) {
@@ -165,17 +175,19 @@ public class MbModulos implements Serializable {
     // Metodo implementado para el evento change en el Jsf
     public void dameValoresModuloChange() {
         try {
-            int id = moduloMenucmb.getIdMenu();
+            int id = moduloMenucmb2.getIdMenu();
             DaoPer daoPermisos = new DaoPer();
             ArrayList<ModuloSubMenu> moduloSubMenu = new ArrayList<ModuloSubMenu>();
             moduloSubMenu = daoPermisos.dameSubMenus(id);
-            ModuloSubMenu subMenu = new ModuloSubMenu();
-            subMenu.setIdSubMenu(0);
-            subMenu.setSubMenu("Seleccione un Sub Menu");
-            SelectItem selecItem = new SelectItem(subMenu, subMenu.getSubMenu());
-            moduloSubMenuCmb2.add(selecItem);
-            for (ModuloSubMenu mod : moduloSubMenu) {
-                moduloSubMenuCmb2.add(new SelectItem(mod, mod.getSubMenu()));
+            if (moduloSubMenu.size() > 0) {
+                ModuloSubMenu subMenu = new ModuloSubMenu();
+                subMenu.setIdSubMenu(0);
+                subMenu.setSubMenu("Seleccione un Sub Menu");
+                SelectItem selecItem = new SelectItem(subMenu, subMenu.getSubMenu());
+                moduloSubMenuCmb2.add(selecItem);
+                for (ModuloSubMenu mod : moduloSubMenu) {
+                    moduloSubMenuCmb2.add(new SelectItem(mod, mod.getSubMenu()));
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(MbModulos.class.getName()).log(Level.SEVERE, null, ex);

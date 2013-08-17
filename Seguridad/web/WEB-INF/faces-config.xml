@@ -50,9 +50,11 @@
         <converter-class>converterPermisos.ConverterPerfil</converter-class>
     </converter>
 
+    
+    
     <converter>
-        <converter-id>traerPickList</converter-id>
-        <converter-class>converterPickList.ConverterPikList</converter-class>
+        <converter-id>traerUsuarios</converter-id>
+        <converter-class>converterPermisos.ConverterUsuarios</converter-class>
     </converter>
 
 </faces-config>

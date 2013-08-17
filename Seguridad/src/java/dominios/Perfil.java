@@ -12,9 +12,15 @@ import java.io.Serializable;
  */
 public class Perfil implements Serializable {
 
-    private int idPerfiles;
+    private int idPerfil;
     private String perfil;
     private int idUsuario;
+
+    public Perfil() {
+        idPerfil = 0;
+        perfil = "";
+        idUsuario = 0;
+    }
 
     public int getIdUsuario() {
         return idUsuario;
@@ -24,12 +30,12 @@ public class Perfil implements Serializable {
         this.idUsuario = idUsuario;
     }
 
-    public int getIdPerfiles() {
-        return idPerfiles;
+    public int getIdPerfil() {
+        return idPerfil;
     }
 
-    public void setIdPerfiles(int idPerfiles) {
-        this.idPerfiles = idPerfiles;
+    public void setIdPerfil(int idPerfil) {
+        this.idPerfil = idPerfil;
     }
 
     public String getPerfil() {
@@ -43,7 +49,7 @@ public class Perfil implements Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + this.idPerfiles;
+        hash = 79 * hash + this.idPerfil;
         return hash;
     }
 
@@ -56,7 +62,7 @@ public class Perfil implements Serializable {
             return false;
         }
         final Perfil other = (Perfil) obj;
-        if (this.idPerfiles != other.idPerfiles) {
+        if (this.idPerfil != other.idPerfil) {
             return false;
         }
         return true;

@@ -69,8 +69,8 @@ public class MbPerfiles implements Serializable {
         ArrayList<Perfil> perfil = new ArrayList<Perfil>();
         DaoPer dp = new DaoPer();
         Perfil pF = new Perfil();
-        pF.setPerfil("Seleccione Perfil");
-        pF.setIdPerfiles(0);
+        pF.setPerfil("Nuevo Perfil");
+        pF.setIdPerfil(0);
         SelectItem itemModulo = new SelectItem(pF, pF.getPerfil());
         perfiles.add(itemModulo);
         perfil = dp.damePefiles();

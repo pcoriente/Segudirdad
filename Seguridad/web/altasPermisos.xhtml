@@ -17,12 +17,11 @@
                         <p:menubar id="Menu">  
                             <p:menuitem value="Base de Datos" onclick="agregarBds.show();" icon="ui-icon-disk" />
                             <p:menuitem value="Perfiles" icon="ui-icon-person" actionListener="#{mbSeguridad.limpiarPerfiles()}" update="nombrePerfil" process="@this listaPerfiles"  onclick="perfil.show();"/>
-                            <p:menuitem value="Usuarios" update="Menu" icon="ui-icon-person" disabled="#{mbSeguridad.mbBasesDatos.baseDatos.idBaseDatos==0 || mbSeguridad.mbPerfiles.perfilCmb.idPerfiles==0}" onclick="dlg.show();"/>
+                            <p:menuitem value="Usuarios" update="Menu" icon="ui-icon-person" disabled="#{mbSeguridad.mbBasesDatos.baseDatos.idBaseDatos==0 || mbSeguridad.mbPerfiles.perfilCmb.idPerfil==0}" onclick="dlg.show();"/>
                             <p:submenu  icon="ui-icon-wrench"> 
-                                <p:menuitem value="Modulos Menus" process="@this modulos" actionListener="#{mbSeguridad.limpiarMenus()}" update="modulosMenu" onclick="agrgarModuloMenu.show();" icon="ui-icon-document"/>
-                                <p:menuitem value="Modulos SubMenus"  process="@this" actionListener="#{mbSeguridad.limpiarSubModulos()}" onclick="agregarModuloSubMenu.show();" icon="ui-icon-document" update="subMenuNom cmbModuloSubMenucmbMenu"/>  
                                 <p:menuitem  value="Modulos" actionListener="#{mbSeguridad.limpiarModulos()}" onclick="modulo.show();" icon="ui-icon-document"/>  
                                 <p:menuitem value="Acciones" disabled="#{mbSeguridad.mbModulos.moduloCmb.idModulo== 0}" onclick="acciones.show();" icon="ui-icon-document"/>  
+                                <p:menuitem value="Usuarios" onclick="usuarios.show();" icon="ui-icon-document"/>  
                             </p:submenu>  
                             <p:menuitem  icon="ui-icon-home"  url="index.xhtml"/>
                         </p:menubar> 
@@ -114,33 +113,91 @@
                         update="usuario login password correo growl"
                         />
                 </p:dialog>
-                <p:dialog showEffect="explode" modal="true" header="Altas de Modulos" widgetVar="modulo" hideEffect="explode">
-                    <h:panelGrid columns="2">
+                <p:dialog showEffect="explode"
+                          modal="true" 
+                          header="Altas de Modulos" 
+                          widgetVar="modulo" 
+                          hideEffect="explode">
+                    <p:ajax event="close" update="Menu modulo url moduloMenu subMenu modulos" listener="#{mbSeguridad.limpiarAltasModulos()}"/> 
+                    <h:panelGrid  id="panelPrincipal" columns="3">
                         <p:outputLabel value="Modulo: "/>
                         <p:inputText id="modulo" value="#{mbSeguridad.mbModulos.modulo.modulo}"/>
+                        <p:outputLabel/>
                         <p:outputLabel value="Url: "/>
                         <p:inputText id="url" value="#{mbSeguridad.mbModulos.modulo.url}"/>
+                        <p:outputLabel/>
                         <p:outputLabel value="Modulo Menu: "/>
-                        <p:selectOneMenu  style="width: 210px" id="moduloMenu" value="#{mbSeguridad.mbModulos.moduloMenucmb}">
+                        <p:selectOneMenu id="moduloMenu" 
+                                         style="width: 210px" 
+                                         value="#{mbSeguridad.mbModulos.moduloMenucmb2}">
+
                             <f:selectItems value="#{mbSeguridad.mbModulos.moduloMenuCmb2}"/>
                             <f:converter converterId="traerModulosMenus"/>
                             <p:ajax event="change" 
                                     listener="#{mbSeguridad.mbModulos.dameValoresModuloChange()}"
                                     update="subMenu"/>
                         </p:selectOneMenu>
+                        <p:commandButton  icon="ui-icon-plus" 
+                                          style="height: 33px; width: 20px"
+                                          actionListener="#{mbSeguridad.control()}"
+                                          update="menuRendered panelSubMenu"/>
                         <p:outputLabel value="Modulo SubMenu: "/>
                         <p:selectOneMenu style="width: 210px" id="subMenu" value="#{mbSeguridad.mbModulos.moduloSubMenuCmb}">
                             <f:selectItems value="#{mbSeguridad.mbModulos.moduloSubMenuCmb2}"/>
                             <f:converter converterId="traerModulosSubMenus"/>
                         </p:selectOneMenu>
+                        <p:commandButton  actionListener="#{mbSeguridad.controlSubMenu()}"
+                                          icon="ui-icon-plus" 
+                                          style="height: 33px; width: 20px"
+                                          update="panelSubMenu menuRendered"/>
                     </h:panelGrid>
                     <p:commandButton 
                         icon="ui-icon-disk"
                         value="Guardar"
                         action="#{mbSeguridad.guardarValoresModulo()}" 
-                        update="growl modulos  Menu modulo url moduloMenu subMenu"
-                        oncomplete="altasModulo(xhr, status, args);"
-                        />
+                        update="growl Menu modulo url moduloMenu subMenu modulos"
+                        oncomplete="altasModulo(xhr, status, args);">
+                    </p:commandButton> 
+                    <p:separator/>
+                    <p:outputPanel id="menuRendered">
+                        <p:outputLabel value="Menu:" rendered="#{mbSeguridad.aparecer gt 0}"/>
+                        <p:inputText id="modulosMenu" rendered="#{mbSeguridad.aparecer gt 0}" value="#{mbSeguridad.mbModulos.moduloMenu.menu}"/>
+                        <br></br>
+                        <p:commandButton rendered="#{mbSeguridad.aparecer gt 0}" 
+                                         value="Guardar"
+                                         icon="ui-icon-disk"
+                                         actionListener="#{mbSeguridad.guardarModuloMenu()}"
+                                         update="menuRendered growl cmbModuloSubMenucmbMenu moduloMenu modulosMenu"
+                                         />
+                        <p:commandButton rendered="#{mbSeguridad.aparecer gt 0}"
+                                         value="Cancelar" 
+                                         icon="ui-icon-cancel"
+                                         actionListener="#{mbSeguridad.cancelarDRendereds()}"
+                                         update="menuRendered panelSubMenu"/>
+                    </p:outputPanel>
+                    <p:outputLabel id="panelSubMenu">
+                        <h:panelGrid columns="2"> 
+                            <p:outputLabel value="Nombre SubMenu:" rendered="#{mbSeguridad.aparecerSubMenu gt 0}"/>
+                            <p:inputText id="subMenuNom" value="#{mbSeguridad.sub.subMenu}" rendered="#{mbSeguridad.aparecerSubMenu gt 0}"/>
+                            <p:outputLabel value="Menu" rendered="#{mbSeguridad.aparecerSubMenu gt 0}"/>
+                            <p:selectOneMenu style="width: 210px" id="cmbModuloSubMenucmbMenu" 
+                                             value="#{mbSeguridad.mbModulos.m}"
+                                             rendered="#{mbSeguridad.aparecerSubMenu gt 0}">
+                                <f:selectItems value="#{mbSeguridad.mbModulos.moduloMenuCmb2}"/>
+                                <f:converter converterId="traerModulosMenus"/>
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+                        <p:commandButton rendered="#{mbSeguridad.aparecerSubMenu gt 0}"
+                                         value="Guardar"
+                                         icon="ui-icon-disk"
+                                         actionListener="#{mbSeguridad.guardarModuloSubMenu()}"
+                                         update="growl panelSubMenu subMenuNom cmbModuloSubMenucmbMenu"/>
+                        <p:commandButton  rendered="#{mbSeguridad.aparecerSubMenu gt 0}"
+                                          value="Cancelar" 
+                                          icon="ui-icon-cancel"
+                                          actionListener="#{mbSeguridad.cancelarDRendereds()}"
+                                          update="menuRendered panelSubMenu"/>
+                    </p:outputLabel>
                 </p:dialog>
                 <p:dialog  modal="true"
                            showEffect="explode"
@@ -201,44 +258,43 @@
                                      />
                 </p:dialog >
 
-                <p:dialog header="Altas Menus" 
-                          widgetVar="agrgarModuloMenu"
-                          hideEffect="explode"
+                <p:dialog widgetVar="usuarios" hideEffect="explode" modal="true"
                           showEffect="explode">
-                    <p:outputLabel value="Menu:"/>
-                    <p:inputText id="modulosMenu" value="#{mbSeguridad.mbModulos.moduloMenu.menu}"/>
-                    <br></br>
-                    <p:commandButton value="Guardar"
-                                     icon="ui-icon-disk"
-                                     actionListener="#{mbSeguridad.guardarModuloMenu()}"
-                                     update="growl cmbModuloSubMenucmbMenu moduloMenu"
-                                     oncomplete="altasModuloMenu(xhr, status, args)"/>
-                </p:dialog>
-
-                <p:dialog header="Altas Submenus" 
-                          widgetVar="agregarModuloSubMenu"
-                          hideEffect="explode"
-                          showEffect="explode"
-                          modal="true">
-                    <h:panelGrid columns="2"> 
-                        <p:outputLabel value="Nombre SubMenu:"/>
-                        <p:inputText id="subMenuNom" value="#{mbSeguridad.sub.subMenu}"/>
-                        <p:outputLabel value="Menu"/>
-                        <p:selectOneMenu style="width: 210px" id="cmbModuloSubMenucmbMenu" 
-                                         value="#{mbSeguridad.mbModulos.m}">
-                            <f:selectItems value="#{mbSeguridad.mbModulos.moduloMenuCmb2}"/>
-                            <f:converter converterId="traerModulosMenus"/>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Usuario : "/>
+                        <p:selectOneMenu id="listaUsuarios" style="width: 250px" value="#{mbSeguridad.mbUsuarios.usuarioCmb}">
+                            <f:selectItems  value="#{mbSeguridad.mbUsuarios.listaUsuarios}"/>
+                            <f:converter converterId="traerUsuarios"/>
+                            <p:ajax event="change" 
+                                    listener="#{mbSeguridad.mbUsuarios.damePerfilUsuario()}"
+                                    update="listaPerfil"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Perfil : "/>
+                        <p:selectOneMenu style="width: 250px" id="listaPerfil" value="#{mbSeguridad.mbUsuarios.p2}">
+                            <f:selectItems value="#{mbSeguridad.mbUsuarios.listaPerfiles}"/>
+                            <f:converter converterId="traerPerfil"/>
                         </p:selectOneMenu>
                     </h:panelGrid>
                     <p:commandButton value="Guardar"
                                      icon="ui-icon-disk"
-                                     actionListener="#{mbSeguridad.guardarModuloSubMenu()}"
-                                     update="growl"
-                                     oncomplete="altasModuloSubMenu(xhr, status, args)"/>
+                                     actionListener="#{mbSeguridad.actualizarUsuarioPerfil()}"
+                                     update="growl listaUsuarios listaPerfil"
+                                     oncomplete="modificarUsuarios(xhr, status, args);"/>
+                    <p:ajax event="close" update="listaUsuarios listaPerfil" listener="#{mbSeguridad.limpiarModificacionesPerfilUsuario()}"/> 
                 </p:dialog>
             </div>
         </h:form>
         <script type="text/javascript">
+                                function modificarUsuarios(xhr, status, args) {
+                                    if (args.validationFailed || !args.loggedIn) {
+                                        usuarios.jq.effect("shake", {times: 5}, 100);
+                                    }
+                                    else {
+                                        usuarios.hide();
+                                    }
+                                }
+
+
                                 function altasAcciones(xhr, status, args) {
                                     if (args.validationFailed || !args.loggedIn) {
                                         acciones.jq.effect("shake", {times: 5}, 100);
@@ -268,6 +324,9 @@
                                     }
 
                                 }
+
+
+
                                 function altasUsuarios(xhr, status, args) {
                                     if (args.validationFailed || !args.loggedIn) {
                                         dlg.jq.effect("shake", {times: 5}, 100);
@@ -299,7 +358,6 @@
 
 
         </script>
-
     </h:body>
 </html>
 
