@@ -92,7 +92,38 @@ public class MbModulos implements Serializable {
     }
 
     public List<SelectItem> getModuloSubMenuCmb2() {
+//        if (this.getModuloCmb().getIdModulo() > 0) {
+//            this.CargarModulosActualizar();
+//        }
         return moduloSubMenuCmb2;
+    }
+
+    public void CargarModulosActualizar() {
+        int idModulo = moduloCmb.getIdMenu();
+        int i = this.getModuloCmb().getIdModulo();
+        DaoPer daoPermisos = new DaoPer();
+        Modulo m = new Modulo();
+        try {
+            m = daoPermisos.dameModulo(idModulo);
+            getModulo().setModulo(m.getModulo());
+            getModulo().setUrl(m.getUrl());
+            getModuloMenucmb2().setIdMenu(m.getIdMenu());
+            ArrayList<ModuloSubMenu> arrayModulosSubMenu = new ArrayList<>();
+            arrayModulosSubMenu = daoPermisos.dameSubMenus(idModulo);
+            ArrayList<SelectItem> valoressubmenu = new ArrayList<>();
+            ModuloSubMenu moduloSubmenu = new ModuloSubMenu();
+            moduloSubmenu.setIdSubMenu(0);
+            moduloSubmenu.setSubMenu("Seleccione un SubMenu");
+            SelectItem selectItem = new SelectItem(moduloSubmenu, moduloSubmenu.getSubMenu());
+            valoressubmenu.add(selectItem);
+            for (ModuloSubMenu modulo : arrayModulosSubMenu) {
+                valoressubmenu.add(new SelectItem(modulo, modulo.getSubMenu()));
+            }
+            this.setModuloSubMenuCmb2(valoressubmenu);
+//          mbModulos.getModuloSubMenuCmb().setIdSubMenu(m.getIdSubMenu());
+        } catch (SQLException ex) {
+            Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void setModuloSubMenuCmb2(List<SelectItem> moduloSubMenuCmb2) {
@@ -117,6 +148,7 @@ public class MbModulos implements Serializable {
     }
 
     public ModuloSubMenu getModuloSubMenuCmb() {
+
         return moduloSubMenuCmb;
     }
 
@@ -174,6 +206,7 @@ public class MbModulos implements Serializable {
 
     // Metodo implementado para el evento change en el Jsf
     public void dameValoresModuloChange() {
+        moduloSubMenuCmb2 = new ArrayList<>();
         try {
             int id = moduloMenucmb2.getIdMenu();
             DaoPer daoPermisos = new DaoPer();

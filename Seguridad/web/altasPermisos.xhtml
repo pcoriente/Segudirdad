@@ -19,7 +19,12 @@
                             <p:menuitem value="Perfiles" icon="ui-icon-person" actionListener="#{mbSeguridad.limpiarPerfiles()}" update="nombrePerfil" process="@this listaPerfiles"  onclick="perfil.show();"/>
                             <p:menuitem value="Usuarios" update="Menu" icon="ui-icon-person" disabled="#{mbSeguridad.mbBasesDatos.baseDatos.idBaseDatos==0 || mbSeguridad.mbPerfiles.perfilCmb.idPerfil==0}" onclick="dlg.show();"/>
                             <p:submenu  icon="ui-icon-wrench"> 
-                                <p:menuitem  value="Modulos" actionListener="#{mbSeguridad.limpiarModulos()}" onclick="modulo.show();" icon="ui-icon-document"/>  
+                                <p:menuitem  value="Modulos" 
+                                             actionListener="#{mbSeguridad.limpiarModulos()}"
+                                             onclick="modulo.show();" 
+                                             icon="ui-icon-document" 
+                                             process="@this"
+                                             update="modulo url subMenu"/>  
                                 <p:menuitem value="Acciones" disabled="#{mbSeguridad.mbModulos.moduloCmb.idModulo== 0}" onclick="acciones.show();" icon="ui-icon-document"/>  
                                 <p:menuitem value="Usuarios" onclick="usuarios.show();" icon="ui-icon-document"/>  
                             </p:submenu>  
@@ -59,7 +64,7 @@
                                 <f:converter converterId="traerModulos"/>
                                 <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
                                         event="change" 
-                                        update="PickAcciones Menu perfilNom"
+                                        update="PickAcciones Menu perfilNom modulo url moduloMenu subMenu"
                                         process="@this listaPerfiles listaBd"/>
                             </p:selectOneMenu>
                         </h:panelGrid>
@@ -142,7 +147,8 @@
                                           actionListener="#{mbSeguridad.control()}"
                                           update="menuRendered panelSubMenu"/>
                         <p:outputLabel value="Modulo SubMenu: "/>
-                        <p:selectOneMenu style="width: 210px" id="subMenu" value="#{mbSeguridad.mbModulos.moduloSubMenuCmb}">
+                        <p:selectOneMenu style="width: 210px" id="subMenu"
+                                         value="#{mbSeguridad.mbModulos.moduloSubMenuCmb}">
                             <f:selectItems value="#{mbSeguridad.mbModulos.moduloSubMenuCmb2}"/>
                             <f:converter converterId="traerModulosSubMenus"/>
                         </p:selectOneMenu>

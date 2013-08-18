@@ -382,6 +382,8 @@ public class MbSeguridad implements Serializable {
     }
 
     public void dameModulosAcciones(int id) throws SQLException {
+        int idModulo2 = mbModulos.getModuloCmb().getIdModulo();
+        CargarModulosActualizar(idModulo2);
         mbAcciones = new MbAcciones();
         if (mbPerfiles.getPerfilCmb().getIdPerfil() != 0) {
             mbPerfiles.getPerfil().setIdPerfil(mbPerfiles.getPerfilCmb().getIdPerfil());
@@ -398,6 +400,8 @@ public class MbSeguridad implements Serializable {
         }
         if (mbModulos.getModuloCmb().getIdModulo() == 0) {
             mbModulos = new MbModulos();
+        } //        codigo colocado Ultimamente
+        else {
         }
         String nomBd = mbBasesDatos.getBaseDatos().getBaseDatos();
         int idPerfil = 0;
@@ -414,6 +418,7 @@ public class MbSeguridad implements Serializable {
             DaoPer daoPermisos = new DaoPer();
             ArrayList<Accion> acciones = new ArrayList<Accion>();
             acciones = daoPermisos.dameValores(nomBd, idModulo, idPerfil);
+
             for (Accion ac : acciones) {
                 if (ac.getIdPerfil() == 0) {
                     mbAcciones.accionesOrigen.add(ac);
@@ -421,6 +426,50 @@ public class MbSeguridad implements Serializable {
                     mbAcciones.accionesDestino.add(ac);
                 }
             }
+        }
+    }
+
+    public void CargarModulosActualizar() {
+        int idModulo = mbModulos.getModuloCmb().getIdMenu();
+        DaoPer daoPermisos = new DaoPer();
+        Modulo m = new Modulo();
+        try {
+            m = daoPermisos.dameModulo(idModulo);
+            ArrayList<ModuloSubMenu> arrayModulosSubMenu = new ArrayList<>();
+            arrayModulosSubMenu = daoPermisos.dameSubMenus(idModulo);
+            ArrayList<SelectItem> valoressubmenu = new ArrayList<>();
+            ModuloSubMenu moduloSubmenu = new ModuloSubMenu();
+            moduloSubmenu.setIdSubMenu(0);
+            moduloSubmenu.setSubMenu("Seleccione un SubMenu");
+            SelectItem selectItem = new SelectItem(moduloSubmenu, moduloSubmenu.getSubMenu());
+            valoressubmenu.add(selectItem);
+            for (ModuloSubMenu modulo : arrayModulosSubMenu) {
+                valoressubmenu.add(new SelectItem(modulo, modulo.getSubMenu()));
+            }
+            mbModulos.setModuloSubMenuCmb2(valoressubmenu);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void CargarModulosActualizar(int idModulo) {
+        DaoPer daoPermisos = new DaoPer();
+        Modulo m = new Modulo();
+        try {
+            m = daoPermisos.dameModulo(idModulo);
+            mbModulos.getModuloSubMenuCmb().setIdSubMenu(m.getIdSubMenu());
+
+            mbModulos.getModulo().setModulo(m.getModulo());
+            mbModulos.getModulo().setUrl(m.getUrl());
+            mbModulos.getModuloMenucmb2().setIdMenu(m.getIdMenu());
+
+
+
+
+
+
+        } catch (SQLException ex) {
+            Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -501,7 +550,11 @@ public class MbSeguridad implements Serializable {
     }
 
     public void limpiarModulos() {
-        mbModulos = new MbModulos();
+        if (mbModulos.getModuloCmb().getIdModulo() == 0) {
+            mbModulos = new MbModulos();
+        } else {
+            CargarModulosActualizar();
+        }
     }
 
     public void setMbBasesDatos(MbBasesDatos mbBasesDatos) {

@@ -179,6 +179,9 @@ public class DaoPer {
             while (rs.next()) {
                 m.setIdModulo(rs.getInt("idModulo"));
                 m.setModulo(rs.getString("modulo"));
+                m.setUrl(rs.getString("url"));
+                m.setIdSubMenu(rs.getInt("idSubMenu"));
+                m.setIdMenu(rs.getInt("idMenu"));
             }
         } finally {
             cn.close();
