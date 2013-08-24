@@ -8,6 +8,7 @@ import daoPermisos.DaoPer;
 import dominios.Accion;
 import dominios.BaseDato;
 import dominios.Modulo;
+import dominios.ModuloMenu;
 import dominios.ModuloSubMenu;
 import dominios.UsuarioPerfil;
 import java.io.Serializable;
@@ -91,8 +92,9 @@ public class MbSeguridad implements Serializable {
         mbBasesDatos = new MbBasesDatos();
         mbUsuarios = new MbUsuarios();
         mbAcciones = new MbAcciones();
-        mbModulos = new MbModulos();
+//     mbModulos = new MbModulos();
         mbPerfiles = new MbPerfiles();
+
     }
 
     public void actualizarUsuarioPerfil() {
@@ -160,23 +162,23 @@ public class MbSeguridad implements Serializable {
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage msg = null;
         boolean loggedIn = false;
-        if (mbModulos.getModulo().getIdModulo() != 0) {
-            mbModulos.getModulo().getModulo();
-            mbModulos.getModulo().setIdModulo(mbModulos.getModuloCmb().getIdModulo());
-            daoPer.ActualizarModulos(mbModulos.getModulo());
-            loggedIn = true;
-            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "El Modulo fue Actualizado Correctamente");
+//        if (mbModulos.getModulo().getIdModulo() != 0) {
+//            mbModulos.getModulo().getModulo();
+//            mbModulos.getModulo().setIdModulo(mbModulos.getModuloCmb().getIdModulo());
+//            daoPer.ActualizarModulos(mbModulos.getModulo());
+//            loggedIn = true;
+//            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "El Modulo fue Actualizado Correctamente");
+//        } else {
+        if (mbModulos.getModulo().getModulo().equals("")) {
+            loggedIn = false;
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese un Nombre de Modulo");
         } else {
-            if (mbModulos.getModulo().getModulo().equals("")) {
-                loggedIn = false;
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese un Nombre de Modulo");
-            } else {
-                int identity = daoPer.guardarModulo(mbModulos.getModulo());
-                loggedIn = true;
-                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Nuevo Modulo Disponible");
-                mbModulos.getModulo().setIdModulo(identity);
-                mbModulos.getModulo().setModulo(mbModulos.getModulo().getModulo());
-            }
+            int identity = daoPer.guardarModulo(mbModulos.getModulo());
+            loggedIn = true;
+            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Nuevo Modulo Disponible");
+            mbModulos.getModulo().setIdModulo(identity);
+            mbModulos.getModulo().setModulo(mbModulos.getModulo().getModulo());
+//            }
         }
         FacesContext.getCurrentInstance().addMessage(null, msg);
         context.addCallbackParam("loggedIn", loggedIn);
@@ -228,9 +230,11 @@ public class MbSeguridad implements Serializable {
                 daoPer.insertarSubMenu(moduloSubMenu);
                 sub.setSubMenu("");
                 mbModulos.getM().setIdMenu(0);
+//               
                 loggedIn = true;
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Nuevos SubModulos Disponibles");
                 this.setAparecerSubMenu(0);
+                this.getMbModulos().setUpdateSubMenu(1);
             } catch (SQLException ex) {
                 Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", ex.toString());
@@ -259,7 +263,13 @@ public class MbSeguridad implements Serializable {
                 mbUsuarios.getUsuario().getIdUsuario();
                 String perfil = mbPerfiles.getPerfil().getPerfil();
                 int identity = daoPer.insertarPerfil(mbPerfiles.getPerfil());
-                dameModulosAcciones(identity);
+
+
+
+//                dameModulosAcciones(identity);
+
+
+
                 mbPerfiles.getPerfilCmb().setIdPerfil(identity);
                 mbPerfiles.getPerfil().setPerfil(perfil);
                 loggedIn = true;
@@ -270,62 +280,61 @@ public class MbSeguridad implements Serializable {
         context.addCallbackParam("loggedIn", loggedIn);
     }
 
-    public void limpiarAltasModulos() {
-        mbModulos.getModuloCmb().setIdMenu(0);
-        mbModulos.getModuloMenucmb2().setIdMenu(0);
-        mbModulos.getModulo().setUrl("");
-        mbModulos.getModulo().setModulo("");
-        mbModulos.getModuloSubMenuCmb().setIdMenu(0);
-        ArrayList<SelectItem> select = new ArrayList<>();
-        mbModulos.setModuloSubMenuCmb2(select);
-    }
-
     public void guardarValoresModulo() {
-        RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage msg = null;
-        boolean loggedIn = false;
         DaoPer daoPermisos = new DaoPer();
         mbModulos.getModulo().getModulo();
         mbModulos.getModulo().getUrl();
-        mbModulos.getModulo().setIdMenu(mbModulos.getModuloMenucmb2().getIdMenu());
+        mbModulos.getModulo().setIdMenu(mbModulos.getModuloMenucmb23().getIdMenu());
         try {
             mbModulos.getModulo().setIdSubMenu(mbModulos.getModuloSubMenuCmb().getIdSubMenu());
         } catch (Exception e) {
             mbModulos.getModulo().setIdSubMenu(0);
         }
-
-        try {
-            if (mbModulos.getModulo().getModulo().equals("") && mbModulos.getModulo().getUrl().equals("") && mbModulos.getModulo().getIdMenu() == 0) {
-                loggedIn = false;
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese todas las Opciones");
-            } else if (mbModulos.getModulo().equals("")) {
-                loggedIn = false;
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese un Modulo");
-            } else if (mbModulos.getModulo().getUrl().equals("")) {
-                loggedIn = false;
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese una Url");
-            } else if (mbModulos.getModulo().getIdMenu() == 0) {
-                loggedIn = false;
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Seleccione un Menu Modulo");
-            } else {
-                int id = daoPermisos.guardarModulo(mbModulos.getModulo());
-                mbModulos.getModuloCmb().setIdModulo(id);
+        if (mbModulos.getModuloCmb().getIdModulo() > 0) {
+            RequestContext context = RequestContext.getCurrentInstance();
+            FacesMessage msg = null;
+            boolean loggedIn = false;
+            int idModulo = mbModulos.getModuloCmb().getIdModulo();
+            try {
+                daoPermisos.actualizarModulos(mbModulos.getModulo(), idModulo);
                 loggedIn = true;
-                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Nuevos modulos Disponibles");
-                int x = 0;
-                mbModulos.getModuloCmb().setIdMenu(0);
-                mbModulos.getModuloMenucmb2().setIdMenu(0);
-                mbModulos.getModulo().setUrl("");
-                mbModulos.getModulo().setModulo("");
-                mbModulos.getModuloSubMenuCmb().setIdMenu(0);
-                ArrayList<SelectItem> select = new ArrayList<>();
-                mbModulos.setModuloSubMenuCmb2(select);
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Modulo Actualizado");
+            } catch (SQLException ex) {
+                loggedIn = false;
+                Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(MbModulos.class.getName()).log(Level.SEVERE, null, ex);
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+            context.addCallbackParam("loggedIn", loggedIn);
+        } else {
+            RequestContext context = RequestContext.getCurrentInstance();
+            FacesMessage msg = null;
+            boolean loggedIn = false;
+
+            try {
+                if (mbModulos.getModulo().getModulo().equals("") && mbModulos.getModulo().getUrl().equals("") && mbModulos.getModulo().getIdMenu() == 0) {
+                    loggedIn = false;
+                    msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese todas las Opciones");
+                } else if (mbModulos.getModulo().equals("")) {
+                    loggedIn = false;
+                    msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese un Modulo");
+                } else if (mbModulos.getModulo().getUrl().equals("")) {
+                    loggedIn = false;
+                    msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese una Url");
+                } else if (mbModulos.getModulo().getIdMenu() == 0) {
+                    loggedIn = false;
+                    msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Seleccione un Menu Modulo");
+                } else {
+                    int id = daoPermisos.guardarModulo(mbModulos.getModulo());
+                    mbModulos.getModuloCmb().setIdModulo(id);
+                    loggedIn = true;
+                    msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Nuevos modulos Disponibles");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(MbModulos.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+            context.addCallbackParam("loggedIn", loggedIn);
         }
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-        context.addCallbackParam("loggedIn", loggedIn);
     }
 
     public void guardarAcciones() throws SQLException {
@@ -382,8 +391,9 @@ public class MbSeguridad implements Serializable {
     }
 
     public void dameModulosAcciones(int id) throws SQLException {
-        int idModulo2 = mbModulos.getModuloCmb().getIdModulo();
-        CargarModulosActualizar(idModulo2);
+//        int idModulo2 = mbModulos.getModuloCmb().getIdModulo();
+//        CargarModulosActualizar(idModulo2);
+//        cargarListaSubMenus();
         mbAcciones = new MbAcciones();
         if (mbPerfiles.getPerfilCmb().getIdPerfil() != 0) {
             mbPerfiles.getPerfil().setIdPerfil(mbPerfiles.getPerfilCmb().getIdPerfil());
@@ -399,7 +409,7 @@ public class MbSeguridad implements Serializable {
             mbPerfiles = new MbPerfiles();
         }
         if (mbModulos.getModuloCmb().getIdModulo() == 0) {
-            mbModulos = new MbModulos();
+//            mbModulos = new MbModulos();
         } //        codigo colocado Ultimamente
         else {
         }
@@ -429,14 +439,20 @@ public class MbSeguridad implements Serializable {
         }
     }
 
-    public void CargarModulosActualizar() {
-        int idModulo = mbModulos.getModuloCmb().getIdMenu();
+    public void cargarListaSubMenus(int id) {
+        if (id == 0) {
+            System.err.println("*************");
+            System.err.println("****vacio****");
+            System.err.println("*************");
+        }
         DaoPer daoPermisos = new DaoPer();
-        Modulo m = new Modulo();
+//        Modulo m = new Modulo();
         try {
-            m = daoPermisos.dameModulo(idModulo);
+            ArrayList<SelectItem> vacio = new ArrayList<>();
+            mbModulos.setModuloSubMenuCmb2(vacio);
+//          m = daoPermisos.dameModulo(idModulo);
             ArrayList<ModuloSubMenu> arrayModulosSubMenu = new ArrayList<>();
-            arrayModulosSubMenu = daoPermisos.dameSubMenus(idModulo);
+            arrayModulosSubMenu = daoPermisos.dameSubMenus(id);
             ArrayList<SelectItem> valoressubmenu = new ArrayList<>();
             ModuloSubMenu moduloSubmenu = new ModuloSubMenu();
             moduloSubmenu.setIdSubMenu(0);
@@ -457,17 +473,11 @@ public class MbSeguridad implements Serializable {
         Modulo m = new Modulo();
         try {
             m = daoPermisos.dameModulo(idModulo);
-            mbModulos.getModuloSubMenuCmb().setIdSubMenu(m.getIdSubMenu());
-
+            this.getMbModulos().setModulo(m);
             mbModulos.getModulo().setModulo(m.getModulo());
             mbModulos.getModulo().setUrl(m.getUrl());
-            mbModulos.getModuloMenucmb2().setIdMenu(m.getIdMenu());
-
-
-
-
-
-
+//            mbModulos.getModuloMenucmb23().setIdMenu(m.getIdMenu());
+//            mbModulos.getModuloSubMenuCmb().setIdSubMenu(m.getIdSubMenu());
         } catch (SQLException ex) {
             Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -535,9 +545,11 @@ public class MbSeguridad implements Serializable {
         mbUsuarios = new MbUsuarios();
     }
 
-    public void limpiarSubModulos() {
-        mbModulos = new MbModulos();
-        sub = new ModuloSubMenu();
+    public void cargarDatos() {
+        mbModulos.getModuloMenucmb23().setIdMenu(mbModulos.getModuloCmb().getIdMenu());
+        mbModulos.getModulo().setModulo(mbModulos.getModuloCmb().getModulo());
+        mbModulos.getModulo().setUrl(mbModulos.getModuloCmb().getUrl());
+        mbModulos.getModuloSubMenuCmb().setIdSubMenu(mbModulos.getModuloCmb().getIdSubMenu());
     }
 
     public String home() {
@@ -549,12 +561,9 @@ public class MbSeguridad implements Serializable {
         return mbBasesDatos;
     }
 
-    public void limpiarModulos() {
-        if (mbModulos.getModuloCmb().getIdModulo() == 0) {
-            mbModulos = new MbModulos();
-        } else {
-            CargarModulosActualizar();
-        }
+    public void limpiarPerfil() {
+        ArrayList<SelectItem> selectItems = new ArrayList<>();
+        mbUsuarios.setListaPerfiles(selectItems);
     }
 
     public void setMbBasesDatos(MbBasesDatos mbBasesDatos) {

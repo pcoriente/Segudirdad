@@ -23,6 +23,7 @@ public class Modulo implements Serializable {
     }
 
     public String getUrl() {
+        
         return url;
     }
 

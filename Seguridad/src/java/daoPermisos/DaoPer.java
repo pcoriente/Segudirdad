@@ -29,6 +29,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import managedBeas.MbModulos;
 import managedBeas.MbUsuarios;
 import utilerias.Utilerias;
 
@@ -485,17 +486,6 @@ public class DaoPer {
 
     }
 
-    public void ActualizarModulos(Modulo m) throws SQLException {
-        String sql = "UPDATE modulos set modulo='" + m.getModulo() + "' WHERE idModulo=" + m.getIdModulo();
-        Connection cn = ds.getConnection();
-        PreparedStatement ps = cn.prepareStatement(sql);
-        try {
-            ps.executeUpdate();
-        } finally {
-            cn.close();
-        }
-    }
-
     public ArrayList<BaseDato> dameListaBds() throws SQLException {
         ArrayList<BaseDato> lista = new ArrayList<BaseDato>();
         Connection cn = null;
@@ -678,5 +668,17 @@ public class DaoPer {
         } finally {
             cn.close();
         }
+    }
+
+    public void actualizarModulos(Modulo modulo, int idModulo) throws SQLException {
+        String sql = "UPDATE modulos set modulo='"
+                + modulo.getModulo()
+                + "', url='" + modulo.getUrl()
+                + "', idSubMenu='" + modulo.getIdSubMenu()
+                + "', idMenu='" + modulo.getIdMenu()
+                + "' WHERE idModulo=" + idModulo;
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        st.executeUpdate(sql);
     }
 }

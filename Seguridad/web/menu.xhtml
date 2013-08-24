@@ -1,0 +1,17 @@
+<p:menubar id="Menu"
+           xmlns:p="http://primefaces.org/ui">  
+    <p:menuitem value="Base de Datos" onclick="agregarBds.show();" icon="ui-icon-disk" />
+    <p:menuitem value="Perfiles" icon="ui-icon-person" actionListener="#{mbSeguridad.limpiarPerfiles()}" update="nombrePerfil" process="@this listaPerfiles"  onclick="perfil.show();"/>
+    <p:menuitem value="Usuarios" update="Menu" icon="ui-icon-person"  process="@this" disabled="#{mbSeguridad.mbBasesDatos.baseDatos.idBaseDatos==0 || mbSeguridad.mbPerfiles.perfilCmb.idPerfil==0}" onclick="dlg.show();"/>
+    <p:submenu  icon="ui-icon-wrench"> 
+        <p:menuitem  value="Modulos" 
+                     actionListener="#{mbSeguridad.cargarDatos()}"
+                     onclick="modulo.show();" 
+                     icon="ui-icon-document" 
+                     process="@this"
+                     update="modulo url"/>  
+        <p:menuitem value="Acciones" disabled="#{mbSeguridad.mbModulos.moduloCmb.idModulo== 0}" onclick="acciones.show();" icon="ui-icon-document"/>  
+        <p:menuitem value="Asignar Perfil Usuario" onclick="usuarios.show();" update="listaPerfil" icon="ui-icon-document" actionListener="#{mbSeguridad.limpiarPerfil()}"/>  
+    </p:submenu>  
+    <p:menuitem  icon="ui-icon-home"  url="index.xhtml"/>
+</p:menubar> 

@@ -41,7 +41,7 @@ public class MbUsuarios implements Serializable {
         this.perfil = perfil;
     }
 
-    public Perfil getP2()  {
+    public Perfil getP2() {
 //        if (usuarioCmb.getIdUsuario() > 0) {
 //            p2 = dameValoresPerfil(usuarioCmb.getIdUsuario());
 //        }
@@ -117,13 +117,12 @@ public class MbUsuarios implements Serializable {
 
     public void damePerfilUsuario() {
         try {
+            listaPerfiles = new ArrayList<>();
             p2 = dameValoresPerfil(usuarioCmb.getIdUsuario());
         } catch (SQLException ex) {
             Logger.getLogger(MbUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    
 
     public ArrayList<SelectItem> damePerfil() throws SQLException {
         DaoPer daoPermisos = new DaoPer();

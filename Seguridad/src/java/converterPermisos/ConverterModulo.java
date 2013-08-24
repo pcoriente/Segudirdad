@@ -21,13 +21,18 @@ public class ConverterModulo implements Converter {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        System.err.println("entro al converter");
         Modulo modulo = new Modulo();
         int idModulo = Integer.parseInt(value);
-        DaoPer dao = new DaoPer();
-        try {
-            modulo = dao.dameModulo(idModulo);
-        } catch (SQLException ex) {
-            Logger.getLogger(ConverterModulo.class.getName()).log(Level.SEVERE, null, ex);
+        if (idModulo == 0) {
+            modulo = new Modulo();
+        } else {
+            DaoPer dao = new DaoPer();
+            try {
+                modulo = dao.dameModulo(idModulo);
+            } catch (SQLException ex) {
+                Logger.getLogger(ConverterModulo.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         return modulo;
     }

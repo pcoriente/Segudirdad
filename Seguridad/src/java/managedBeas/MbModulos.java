@@ -32,11 +32,11 @@ public class MbModulos implements Serializable {
 
     private ArrayList<SelectItem> listaModulosMenu;
     private ArrayList<SelectItem> listaModulosSubMenu;
-    private List<SelectItem> listaModulos;
+    private List<SelectItem> listaModulos = new ArrayList<SelectItem>();
     private Modulo modulo = new Modulo();
     private Modulo moduloCmb = new Modulo();
     private ModuloMenu moduloMenucmb = new ModuloMenu();
-    private ModuloMenu moduloMenucmb2 = new ModuloMenu();
+    private ModuloMenu moduloMenucmb23 = new ModuloMenu();
     private ModuloSubMenu moduloSubMenuCmb = new ModuloSubMenu();
     private List<SelectItem> moduloMenuCmb2 = new ArrayList<SelectItem>();
 //    este objeto nuevo es para el seleconemenu de las altas de SubMenus
@@ -47,17 +47,38 @@ public class MbModulos implements Serializable {
     private ModuloSubMenu moduloSubMenu = new ModuloSubMenu();
     private ModuloMenu m = new ModuloMenu();
     ModuloMenu modu = new ModuloMenu();
+    private int updateSubMenu;
+
+    public MbModulos() {
+        this.inicializar();
+    }
+
+    private void inicializar() {
+        this.dameModuloMenu();
+
+    }
+
+    public int getUpdateSubMenu() {
+        return updateSubMenu;
+    }
+
+    public void setUpdateSubMenu(int updateSubMenu) {
+        this.updateSubMenu = updateSubMenu;
+    }
 
     public ModuloMenu getM() {
         return m;
     }
 
-    public ModuloMenu getModuloMenucmb2() {
-        return moduloMenucmb2;
+    public ModuloMenu getModuloMenucmb23() {
+        System.out.println("--------------------------");
+        System.out.println(moduloMenucmb23.getIdMenu());
+        System.out.println("--------------------------");
+        return moduloMenucmb23;
     }
 
-    public void setModuloMenucmb2(ModuloMenu moduloMenucmb2) {
-        this.moduloMenucmb2 = moduloMenucmb2;
+    public void setModuloMenucmb23(ModuloMenu moduloMenucmb2) {
+        this.moduloMenucmb23 = moduloMenucmb2;
     }
 
     public void setM(ModuloMenu m) {
@@ -72,14 +93,12 @@ public class MbModulos implements Serializable {
         this.AltasSubMenu = AltasSubMenu;
     }
 
-    public MbModulos() {
-    }
-
     public ModuloMenu getModuloMenu() {
         return moduloMenu;
     }
 
     public void setModuloMenu(ModuloMenu moduloMenu) {
+
         this.moduloMenu = moduloMenu;
     }
 
@@ -91,10 +110,7 @@ public class MbModulos implements Serializable {
         this.moduloSubMenu = moduloSubMenu;
     }
 
-    public List<SelectItem> getModuloSubMenuCmb2() {
-//        if (this.getModuloCmb().getIdModulo() > 0) {
-//            this.CargarModulosActualizar();
-//        }
+    public List<SelectItem> getModuloSubMenuCmb2() throws SQLException {
         return moduloSubMenuCmb2;
     }
 
@@ -107,7 +123,7 @@ public class MbModulos implements Serializable {
             m = daoPermisos.dameModulo(idModulo);
             getModulo().setModulo(m.getModulo());
             getModulo().setUrl(m.getUrl());
-            getModuloMenucmb2().setIdMenu(m.getIdMenu());
+            getModuloMenucmb23().setIdMenu(m.getIdMenu());
             ArrayList<ModuloSubMenu> arrayModulosSubMenu = new ArrayList<>();
             arrayModulosSubMenu = daoPermisos.dameSubMenus(idModulo);
             ArrayList<SelectItem> valoressubmenu = new ArrayList<>();
@@ -131,7 +147,6 @@ public class MbModulos implements Serializable {
     }
 
     public List<SelectItem> getModuloMenuCmb2() {
-        moduloMenuCmb2 = dameModuloMenu();
         return moduloMenuCmb2;
     }
 
@@ -148,7 +163,6 @@ public class MbModulos implements Serializable {
     }
 
     public ModuloSubMenu getModuloSubMenuCmb() {
-
         return moduloSubMenuCmb;
     }
 
@@ -157,9 +171,7 @@ public class MbModulos implements Serializable {
     }
 
     public ArrayList<SelectItem> getListaModulosMenu() {
-        if (this.listaModulosMenu == null) {
-            listaModulosMenu = this.dameModulosMenu();
-        }
+
         return listaModulosMenu;
     }
 
@@ -192,11 +204,7 @@ public class MbModulos implements Serializable {
     }
 
     public List<SelectItem> getListaModulos() {
-        try {
-            listaModulos = dameModulos();
-        } catch (SQLException ex) {
-            Logger.getLogger(MbModulos.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this.dameModulos();
         return listaModulos;
     }
 
@@ -208,7 +216,7 @@ public class MbModulos implements Serializable {
     public void dameValoresModuloChange() {
         moduloSubMenuCmb2 = new ArrayList<>();
         try {
-            int id = moduloMenucmb2.getIdMenu();
+            int id = moduloMenucmb23.getIdMenu();
             DaoPer daoPermisos = new DaoPer();
             ArrayList<ModuloSubMenu> moduloSubMenu = new ArrayList<ModuloSubMenu>();
             moduloSubMenu = daoPermisos.dameSubMenus(id);
@@ -227,20 +235,20 @@ public class MbModulos implements Serializable {
         }
     }
 
-    private List<SelectItem> dameModulos() throws SQLException {
-        List<SelectItem> Modulos = new ArrayList<SelectItem>();
-        ArrayList<Modulo> modul = new ArrayList<Modulo>();
+    public void dameModulos() {
         DaoPer dp = new DaoPer();
-        Modulo modulo = new Modulo();
+        listaModulos = new ArrayList<SelectItem>();
         modulo.setModulo("Seleccione un Modulo");
         modulo.setIdModulo(0);
         SelectItem itemModulo = new SelectItem(modulo, modulo.getModulo());
-        Modulos.add(itemModulo);
-        modul = dp.dameModulos();
-        for (Modulo d : modul) {
-            Modulos.add(new SelectItem(d, d.getModulo()));
+        listaModulos.add(itemModulo);
+        try {
+            for (Modulo d : dp.dameModulos()) {
+                listaModulos.add(new SelectItem(d, d.getModulo()));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MbModulos.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return Modulos;
     }
 
     public void dameValorId() {
@@ -286,26 +294,22 @@ public class MbModulos implements Serializable {
         return modulosMenu;
     }
 
-    private ArrayList<SelectItem> dameModuloMenu() {
-        ArrayList<ModuloMenu> listaModuloMenu = new ArrayList<ModuloMenu>();
-        ArrayList<SelectItem> m2 = new ArrayList<SelectItem>();
-
+    public void dameModuloMenu() {
         try {
             DaoPer daoPermiso = new DaoPer();
             ModuloMenu moduloMenu = new ModuloMenu();
             moduloMenu.setIdMenu(0);
             moduloMenu.setMenu("Seleccione un Menu");
-
+            moduloMenuCmb2 = new ArrayList<SelectItem>();
             SelectItem select = new SelectItem(moduloMenu, moduloMenu.getMenu());
-            m2.add(select);
-            listaModuloMenu = daoPermiso.dameMOdulosMenu();
-            for (ModuloMenu m : listaModuloMenu) {
-                m2.add(new SelectItem(m, m.getMenu()));
+            moduloMenuCmb2.add(select);
+            for (ModuloMenu m : daoPermiso.dameMOdulosMenu()) {
+                moduloMenuCmb2.add(new SelectItem(m, m.getMenu()));
             }
         } catch (SQLException ex) {
             Logger.getLogger(MbModulos.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return m2;
+//        return m2;
     }
 
     public void guardarValoresModulo() {

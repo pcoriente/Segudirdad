@@ -14,8 +14,6 @@ public class Accion implements Serializable {
 
     private int idAccion;
     private String accion;
-    private int status;
-    private boolean Sta;
     private String idBoton;
     private int idMOdulo;
     private String acciones;
@@ -37,22 +35,6 @@ public class Accion implements Serializable {
         this.acciones = acciones;
     }
 
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public boolean isSta() {
-        return Sta;
-    }
-
-    public void setSta(boolean Sta) {
-        this.Sta = Sta;
-    }
-
     public int getIdAccion() {
         return idAccion;
     }
@@ -67,10 +49,6 @@ public class Accion implements Serializable {
 
     public void setAccion(String accion) {
         this.accion = accion;
-    }
-
-    public void setStatus(byte status) {
-        this.status = status;
     }
 
     public String getIdBoton() {

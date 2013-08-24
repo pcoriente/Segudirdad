@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <p:dialog showEffect="explode"
+                  modal="true" 
+                  header="Altas de Modulos" 
+                  widgetVar="modulo" 
+                  hideEffect="explode"
+                  id="panelModulos">
+            <p:ajax event="close" listener="#{mbSeguridad.limpiarAltasModulos()}"
+                    process="@this"
+                    update="moduloMenu"/>
+            <h:panelGrid  id="panelPrincipal" columns="3">
+                <p:outputLabel value="Modulo: "/>
+                <p:inputText id="modulo" value="#{mbSeguridad.mbModulos.modulo.modulo}"/>
+                <p:outputLabel/>
+                <p:outputLabel value="Url: "/>
+                <p:inputText id="url" value="#{mbSeguridad.mbModulos.modulo.url}"/>
+                <p:outputLabel/>
+                <p:outputLabel value="Modulo Menu: "/>
+                <p:selectOneMenu id="moduloMenu" 
+                                 style="width: 210px" 
+                                 value="#{mbSeguridad.mbModulos.moduloMenucmb23}">
+                    <f:selectItems value="#{mbSeguridad.mbModulos.moduloMenuCmb2}"/>
+                    <f:converter converterId="traerModulosMenus"/>
+                    <p:ajax event="change" 
+                            listener="#{mbSeguridad.mbModulos.dameValoresModuloChange()}"
+                            update="subMenu"/>
+                </p:selectOneMenu>
+                <p:commandButton  icon="ui-icon-plus" 
+                                  style="height: 33px; width: 20px"
+                                  actionListener="#{mbSeguridad.control()}"
+                                  update="menuRendered panelSubMenu"/>
+                <p:outputLabel value="Modulo SubMenu: "/>
+                <p:selectOneMenu style="width: 210px" 
+                                 id="subMenu"
+                                 value="#{mbSeguridad.mbModulos.moduloSubMenuCmb}">
+                    <f:selectItems value="#{mbSeguridad.mbModulos.moduloSubMenuCmb2}"/>
+                    <f:converter converterId="traerModulosSubMenus"/>
+                </p:selectOneMenu>
+                <p:commandButton  actionListener="#{mbSeguridad.controlSubMenu()}"
+                                  icon="ui-icon-plus" 
+                                  style="height: 33px; width: 20px"
+                                  update="panelSubMenu menuRendered"/>
+            </h:panelGrid>
+            <p:commandButton 
+                icon="ui-icon-disk"
+                value="Guardar"
+                action="#{mbSeguridad.guardarValoresModulo()}" 
+                update="growl Menu modulo url moduloMenu subMenu modulos"
+                oncomplete="altasModulo(xhr, status, args);">
+            </p:commandButton> 
+            <p:separator/>
+            <p:outputPanel id="menuRendered">
+                <p:outputLabel value="Menu:" rendered="#{mbSeguridad.aparecer gt 0}"/>
+                <p:inputText id="modulosMenu" rendered="#{mbSeguridad.aparecer gt 0}" value="#{mbSeguridad.mbModulos.moduloMenu.menu}"/>
+                <br></br>
+                <p:commandButton rendered="#{mbSeguridad.aparecer gt 0}" 
+                                 value="Guardar"
+                                 icon="ui-icon-disk"
+                                 actionListener="#{mbSeguridad.guardarModuloMenu()}"
+                                 update="menuRendered growl cmbModuloSubMenucmbMenu moduloMenu modulosMenu"
+                                 />
+                <p:commandButton rendered="#{mbSeguridad.aparecer gt 0}"
+                                 value="Cancelar" 
+                                 icon="ui-icon-cancel"
+                                 actionListener="#{mbSeguridad.cancelarDRendereds()}"
+                                 update="menuRendered panelSubMenu"/>
+            </p:outputPanel>
+            <p:outputLabel id="panelSubMenu">
+                <h:panelGrid columns="2"> 
+                    <p:outputLabel value="Nombre SubMenu:" rendered="#{mbSeguridad.aparecerSubMenu gt 0}"/>
+                    <p:inputText id="subMenuNom" value="#{mbSeguridad.sub.subMenu}" rendered="#{mbSeguridad.aparecerSubMenu gt 0}"/>
+                    <p:outputLabel value="Menu" rendered="#{mbSeguridad.aparecerSubMenu gt 0}"/>
+                    <p:selectOneMenu style="width: 210px" id="cmbModuloSubMenucmbMenu" 
+                                     value="#{mbSeguridad.mbModulos.m}"
+                                     rendered="#{mbSeguridad.aparecerSubMenu gt 0}">
+                        <f:selectItems value="#{mbSeguridad.mbModulos.moduloMenuCmb2}"/>
+                        <f:converter converterId="traerModulosMenus"/>
+                    </p:selectOneMenu>
+                </h:panelGrid>
+                <p:commandButton rendered="#{mbSeguridad.aparecerSubMenu gt 0}"
+                                 value="Guardar"
+                                 icon="ui-icon-disk"
+                                 actionListener="#{mbSeguridad.guardarModuloSubMenu()}"
+                                 update="growl panelSubMenu subMenuNom subMenu  cmbModuloSubMenucmbMenu"/>
+                <p:commandButton  rendered="#{mbSeguridad.aparecerSubMenu gt 0}"
+                                  value="Cancelar" 
+                                  icon="ui-icon-cancel"
+                                  actionListener="#{mbSeguridad.cancelarDRendereds()}"
+                                  update="menuRendered panelSubMenu"/>
+            </p:outputLabel>
+        </p:dialog>
+    </h:body>
+</html>
+
