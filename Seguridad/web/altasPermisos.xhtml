@@ -82,7 +82,7 @@
                                              style="height: 33px; width: 20px"
                                              oncomplete="modulo.show();" 
                                              process="@this modulos"
-                                             actionListener="${mbSeguridad.cargarDatos()}"
+                                             actionListener="#{mbSeguridad.cargarDatos()}"
                                              update="panelPrincipal PickAcciones "
                                              />
                         </h:panelGrid>
@@ -160,7 +160,12 @@
                                     update="subMenus"
                                     />
                         </p:selectOneMenu>
-                        <br></br>
+                        <p:commandButton  icon="ui-icon-plus" 
+                                          style="height: 33px; width: 20px"
+                                          actionListener="#{mbSeguridad.control()}"
+                                          process="@this"
+                                          update="valor"
+                                          />
                         <p:outputLabel value="SubMenu:"/>
                         <p:selectOneMenu id="subMenus" value="#{mbModulos.moduloSubMenuCmb}" 
                                          style="width: 210px" >
@@ -169,7 +174,8 @@
                         </p:selectOneMenu>
                         <p:commandButton  icon="ui-icon-plus" 
                                           style="height: 33px; width: 20px"
-                                          actionListener="#{mbSeguridad.control()}"
+                                          actionListener="#{mbSeguridad.controlSubMenu()}"
+                                          update="valorSubmenu growl"
                                           />
                     </h:panelGrid>
                     <p:commandButton 
@@ -179,6 +185,40 @@
                         update="panelPrincipal growl modulos Menu"
                         oncomplete="altasModulo(xhr, status, args);">
                     </p:commandButton> 
+                    <br></br>
+                    <p:outputPanel id="valor">
+                        <p:outputLabel value="Modulo: "
+                                       rendered="#{mbSeguridad.aparecer gt  0}"/>
+                        <p:inputText id="altasMenu"
+                                     value="#{mbSeguridad.mbModulos.moduloMenu.menu}"
+                                     rendered="#{mbSeguridad.aparecer gt  0}">
+                        </p:inputText>
+                        <br></br>
+                        <p:commandButton actionListener="#{mbSeguridad.guardarModuloMenu()}"
+                                         value="Guardar"
+                                         rendered="#{mbSeguridad.aparecer gt  0}" 
+                                         update="moduloMenu valor growl altasMenu"/>
+                        <p:commandButton actionListener="#{mbSeguridad.desaparecer()}"
+                                         value="Cancelar"
+                                         rendered="#{mbSeguridad.aparecer gt  0}" 
+                                         update="valor"/>
+                    </p:outputPanel>
+                    <p:outputPanel id="valorSubmenu">
+                        <p:outputLabel value="Sub Menu:" 
+                                       rendered="#{mbSeguridad.aparecerSubMenu gt 0}"/>
+                        <p:inputText id="altasSubmenu"
+                                     value="#{mbSeguridad.sub.subMenu}" 
+                                     rendered="#{mbSeguridad.aparecerSubMenu gt 0}"/>
+                        <br></br>
+                        <p:commandButton actionListener="#{mbSeguridad.guardarModuloSubMenu()}"
+                                         update="growl altasSubmenu valorSubmenu subMenus"
+                                         rendered="#{mbSeguridad.aparecerSubMenu gt 0}"
+                                         value="Guardar"/>
+                        <p:commandButton actionListener="#{mbSeguridad.desaparecer()}"
+                                         value="Cancelar"
+                                         rendered="#{mbSeguridad.aparecerSubMenu gt  0}" 
+                                         update="valorSubmenu "/>
+                    </p:outputPanel>
                 </p:dialog>
                 <p:dialog  modal="true"
                            showEffect="explode"

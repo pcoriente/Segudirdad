@@ -70,9 +70,21 @@ public class MbSeguridad implements Serializable {
         this.setAparecerSubMenu(0);
     }
 
-    public void controlSubMenu() {
-        this.setAparecerSubMenu(1);
+    public void desaparecer() {
         this.setAparecer(0);
+        this.setAparecerSubMenu(0);
+    }
+
+    public void controlSubMenu() {
+        if (mbModulos.getModuloMenucmb23().getIdMenu() > 0) {
+            this.setAparecerSubMenu(1);
+            this.setAparecer(0);
+        } else {
+            FacesMessage msg = null;
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Seleccione un Menu");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+        }
+
     }
 
     public void cancelarDRendereds() {
@@ -189,6 +201,7 @@ public class MbSeguridad implements Serializable {
         FacesMessage msg = null;
         boolean loggedIn = false;
         String moduloMenu = mbModulos.getModuloMenu().getMenu();
+        mbModulos.getM().getMenu();
         if (moduloMenu.equals("")) {
             loggedIn = false;
             msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Denegado", "Ingrese un menu");
@@ -212,13 +225,8 @@ public class MbSeguridad implements Serializable {
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage msg = null;
         boolean loggedIn = false;
-        if (mbModulos.getM().getIdMenu() == 0 && sub.getSubMenu().equals("")) {
-            loggedIn = false;
-            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Llene todos los campos");
-        } else if (mbModulos.getM().getIdMenu() == 0) {
-            loggedIn = false;
-            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Seleccione un Menu");
-        } else if (sub.getSubMenu().equals("")) {
+        int x = mbModulos.getModuloMenucmb23().getIdMenu();
+        if (sub.getSubMenu().equals("")) {
             loggedIn = false;
             msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Escriba un SubMenu");
         } else {
@@ -226,15 +234,20 @@ public class MbSeguridad implements Serializable {
                 ModuloSubMenu moduloSubMenu = new ModuloSubMenu();
                 DaoPer daoPer = new DaoPer();
                 moduloSubMenu.setSubMenu(sub.getSubMenu());
-                moduloSubMenu.setIdMenu(mbModulos.getM().getIdMenu());
+                moduloSubMenu.setIdMenu(x);
                 daoPer.insertarSubMenu(moduloSubMenu);
                 sub.setSubMenu("");
-                mbModulos.getM().setIdMenu(0);
-//               
                 loggedIn = true;
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Nuevos SubModulos Disponibles");
                 this.setAparecerSubMenu(0);
                 this.getMbModulos().setUpdateSubMenu(1);
+                ArrayList<SelectItem> selec = new ArrayList<>();
+                ArrayList<ModuloSubMenu> subMenu = new ArrayList<>();
+                subMenu = daoPer.dameSubMenus(x);
+                for (ModuloSubMenu subMen : subMenu) {
+                    selec.add(new SelectItem(subMen, subMen.getSubMenu()));
+                }
+                mbModulos.setModuloSubMenuCmb2(selec);
             } catch (SQLException ex) {
                 Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", ex.toString());
@@ -315,6 +328,9 @@ public class MbSeguridad implements Serializable {
                     loggedIn = false;
                     msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese todas las Opciones");
                 } else if (mbModulos.getModulo().equals("")) {
+                    mbModulos.getModulo().setModulo("");
+//                    mbSeguridad.mbModulos.modulo.modulo
+                            
                     loggedIn = false;
                     msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese un Modulo");
                 } else if (mbModulos.getModulo().getUrl().equals("")) {
@@ -550,6 +566,20 @@ public class MbSeguridad implements Serializable {
         mbModulos.getModulo().setModulo(mbModulos.getModuloCmb().getModulo());
         mbModulos.getModulo().setUrl(mbModulos.getModuloCmb().getUrl());
         mbModulos.getModuloSubMenuCmb().setIdSubMenu(mbModulos.getModuloCmb().getIdSubMenu());
+        DaoPer daoPermisos = new DaoPer();
+        ArrayList<ModuloSubMenu> moduloSubmenu = new ArrayList<>();
+//        if (mbModulos.getModuloCmb().getIdMenu() > 0) {
+        try {
+            moduloSubmenu = daoPermisos.dameSubMenus(mbModulos.getModuloCmb().getIdMenu());
+            ArrayList<SelectItem> arraySelecItem = new ArrayList<>();
+            for (ModuloSubMenu m : moduloSubmenu) {
+                arraySelecItem.add(new SelectItem(m, m.getSubMenu()));
+            }
+            mbModulos.setModuloSubMenuCmb2(arraySelecItem);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+        }
     }
 
     public String home() {

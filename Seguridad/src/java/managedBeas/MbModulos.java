@@ -34,6 +34,7 @@ public class MbModulos implements Serializable {
     private ArrayList<SelectItem> listaModulosSubMenu;
     private List<SelectItem> listaModulos = new ArrayList<SelectItem>();
     private Modulo modulo = new Modulo();
+    
     private Modulo moduloCmb = new Modulo();
     private ModuloMenu moduloMenucmb = new ModuloMenu();
     private ModuloMenu moduloMenucmb23 = new ModuloMenu();
@@ -54,7 +55,7 @@ public class MbModulos implements Serializable {
     }
 
     private void inicializar() {
-        this.dameModuloMenu();
+//        this.dameModuloMenu();
 
     }
 
@@ -147,6 +148,7 @@ public class MbModulos implements Serializable {
     }
 
     public List<SelectItem> getModuloMenuCmb2() {
+        this.dameModuloMenu();
         return moduloMenuCmb2;
     }
 
@@ -237,10 +239,12 @@ public class MbModulos implements Serializable {
 
     public void dameModulos() {
         DaoPer dp = new DaoPer();
+        Modulo modu = new Modulo();
         listaModulos = new ArrayList<SelectItem>();
-        modulo.setModulo("Seleccione un Modulo");
-        modulo.setIdModulo(0);
-        SelectItem itemModulo = new SelectItem(modulo, modulo.getModulo());
+//        Modulo m2 = new Modulo();
+        modu.setModulo("Seleccione un Modulo");
+        modu.setIdModulo(0);
+        SelectItem itemModulo = new SelectItem(modu, modu.getModulo());
         listaModulos.add(itemModulo);
         try {
             for (Modulo d : dp.dameModulos()) {
