@@ -26,7 +26,11 @@
                                              update="modulo url"/>  
                                 <p:menuitem value="Acciones" disabled="#{mbSeguridad.mbModulos.moduloCmb.idModulo== 0}" onclick="acciones.show();" icon="ui-icon-document"/>  
                                 <p:menuitem value="Asignar Perfil Usuario" onclick="usuarios.show();" update="listaPerfil" icon="ui-icon-document" actionListener="#{mbSeguridad.limpiarPerfil()}"/>  
-                            </p:submenu>  
+                            </p:submenu> 
+                            <p:submenu  icon="ui-icon-gear"> 
+                                <p:menuitem value="Monedas"  oncomplete="monedas.show();" icon="ui-icon-document" />  
+                            </p:submenu> 
+
                             <p:menuitem  icon="ui-icon-home"  url="index.xhtml"/>
                         </p:menubar> 
                         <!--<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true"/>-->
@@ -142,6 +146,9 @@
                           widgetVar="modulo" 
                           hideEffect="explode"
                           id="panelModulos">
+                    <p:ajax event="close" listener="#{mbSeguridad.limpiarModulos()}"
+                            process="@this"
+                            update="panelPrincipal"/>
                     <h:panelGrid  id="panelPrincipal" columns="3">
                         <p:outputLabel value="Modulo: "/>
                         <p:inputText id="modulo" value="#{mbSeguridad.mbModulos.modulo.modulo}"/>
@@ -303,6 +310,9 @@
                                      oncomplete="modificarUsuarios(xhr, status, args);"/>
                     <p:ajax event="close" update="listaUsuarios listaPerfil" listener="#{mbSeguridad.limpiarModificacionesPerfilUsuario()}"/> 
                 </p:dialog>
+
+
+                
             </div>
         </h:form>
         <script type="text/javascript">

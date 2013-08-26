@@ -11,6 +11,7 @@ import dominios.Login;
 import dominios.Modulo;
 import dominios.ModuloMenu;
 import dominios.ModuloSubMenu;
+import dominios.Monedas;
 import dominios.Perfil;
 import dominios.PerfilesAcseso;
 import dominios.TablaAccion;
@@ -679,6 +680,33 @@ public class DaoPer {
                 + "' WHERE idModulo=" + idModulo;
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
-        st.executeUpdate(sql);
+        try {
+            st.executeUpdate(sql);
+        } finally {
+            cn.close();
+        }
+    }
+
+    public ArrayList<Monedas> dameTablaMOnedas() throws SQLException {
+        ArrayList<Monedas> monedas = new ArrayList<>();
+        String sql = "SELECT *  FROM monedas";
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                Monedas moneda = new Monedas();
+                moneda.setMoneda(rs.getString("moneda"));
+                moneda.setCodigoIso(rs.getString("codigoIso"));
+                moneda.setPrefijoUnidad(rs.getString("prefijoUnidad"));
+                moneda.setPrefijo(rs.getString("prefijo"));
+                moneda.setSufijo(rs.getString("sufijo"));
+                moneda.setSimbolo(rs.getString("simbolo"));
+                monedas.add(moneda);
+            }
+        } finally {
+            cn.close();
+        }
+        return monedas;
     }
 }

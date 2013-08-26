@@ -10,6 +10,7 @@ import dominios.BaseDato;
 import dominios.Modulo;
 import dominios.ModuloMenu;
 import dominios.ModuloSubMenu;
+import dominios.Monedas;
 import dominios.UsuarioPerfil;
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -24,6 +25,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.RowEditEvent;
 import utilerias.Utilerias;
 
 /**
@@ -37,6 +39,8 @@ public class MbSeguridad implements Serializable {
 
     @ManagedProperty(value = "#{mbBasesDatos}")
     private MbBasesDatos mbBasesDatos = new MbBasesDatos();
+    @ManagedProperty(value = "#{mbMonedas}")
+    private MbMonedas mbMonedas = new MbMonedas();
     @ManagedProperty(value = "#{mbUsuarios}")
     private MbUsuarios mbUsuarios = new MbUsuarios();
     @ManagedProperty(value = "#{mbAcciones}")
@@ -48,6 +52,15 @@ public class MbSeguridad implements Serializable {
     private ModuloSubMenu sub = new ModuloSubMenu();
     private int aparecer;
     private int aparecerSubMenu;
+    private Monedas mone = new Monedas();
+
+    public Monedas getMone() {
+        return mone;
+    }
+
+    public void setMone(Monedas mone) {
+        this.mone = mone;
+    }
 
     public int getAparecerSubMenu() {
         return aparecerSubMenu;
@@ -73,6 +86,15 @@ public class MbSeguridad implements Serializable {
     public void desaparecer() {
         this.setAparecer(0);
         this.setAparecerSubMenu(0);
+    }
+
+    public void limpiarModulos() {
+        ArrayList<SelectItem> selectItem = new ArrayList<>();
+        ModuloSubMenu m = new ModuloSubMenu();
+        m.setIdSubMenu(0);
+        m.setSubMenu("Seleccione un SubMenus");
+        selectItem.add(new SelectItem(m, m.getSubMenu()));
+        mbModulos.setModuloSubMenuCmb2(selectItem);
     }
 
     public void controlSubMenu() {
@@ -330,7 +352,7 @@ public class MbSeguridad implements Serializable {
                 } else if (mbModulos.getModulo().equals("")) {
                     mbModulos.getModulo().setModulo("");
 //                    mbSeguridad.mbModulos.modulo.modulo
-                            
+
                     loggedIn = false;
                     msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese un Modulo");
                 } else if (mbModulos.getModulo().getUrl().equals("")) {
@@ -568,17 +590,22 @@ public class MbSeguridad implements Serializable {
         mbModulos.getModuloSubMenuCmb().setIdSubMenu(mbModulos.getModuloCmb().getIdSubMenu());
         DaoPer daoPermisos = new DaoPer();
         ArrayList<ModuloSubMenu> moduloSubmenu = new ArrayList<>();
-//        if (mbModulos.getModuloCmb().getIdMenu() > 0) {
-        try {
-            moduloSubmenu = daoPermisos.dameSubMenus(mbModulos.getModuloCmb().getIdMenu());
-            ArrayList<SelectItem> arraySelecItem = new ArrayList<>();
-            for (ModuloSubMenu m : moduloSubmenu) {
-                arraySelecItem.add(new SelectItem(m, m.getSubMenu()));
+        if (mbModulos.getModuloCmb().getIdMenu() > 0) {
+            try {
+                ArrayList<SelectItem> arraySelecItem = new ArrayList<>();
+                ModuloSubMenu moduloSubMenu = new ModuloSubMenu();
+                moduloSubMenu.setIdSubMenu(0);
+                moduloSubMenu.setSubMenu("Seleccione un SubMenu");
+                SelectItem select = new SelectItem(moduloSubMenu, moduloSubMenu.getSubMenu());
+                arraySelecItem.add(select);
+                moduloSubmenu = daoPermisos.dameSubMenus(mbModulos.getModuloCmb().getIdMenu());
+                for (ModuloSubMenu m : moduloSubmenu) {
+                    arraySelecItem.add(new SelectItem(m, m.getSubMenu()));
+                }
+                mbModulos.setModuloSubMenuCmb2(arraySelecItem);
+            } catch (SQLException ex) {
+                Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
             }
-            mbModulos.setModuloSubMenuCmb2(arraySelecItem);
-        } catch (SQLException ex) {
-            Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
-//            }
         }
     }
 
@@ -630,5 +657,18 @@ public class MbSeguridad implements Serializable {
 
     public void setMbPerfiles(MbPerfiles mbPerfiles) {
         this.mbPerfiles = mbPerfiles;
+    }
+
+    public MbMonedas getMbMonedas() {
+        return mbMonedas;
+    }
+
+    public void setMbMonedas(MbMonedas mbMonedas) {
+        this.mbMonedas = mbMonedas;
+    }
+
+    public void dameValoresTablaMonedas(RowEditEvent event) {
+        Monedas m = (Monedas) event.getObject();
+        mbMonedas.getMonedas().getSimbolo();
     }
 }

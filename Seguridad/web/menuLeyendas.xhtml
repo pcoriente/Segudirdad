@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:dataTable value="#{mbSeguridad.mbMonedas.tablaMonedas}"
+                         var="m" 
+                         style="width: 910px"
+                         editable="true">
+                <p:ajax event="rowEdit" 
+                        listener="#{mbSeguridad.dameValoresTablaMonedas}"
+                        />
+                <p:column headerText="Moneda" style="width: 100px">
+                    <h:outputText value="#{m.moneda}"/>
+                </p:column>
+                <p:column headerText="Iso" style="width: 30px">
+                    <h:outputText value="#{m.codigoIso}"/>
+                </p:column>
+                <p:column headerText="Prefijo Unidad" style="width: 80px">
+                    <h:outputText value="#{m.prefijoUnidad}"/>
+                </p:column>
+                <p:column headerText="Prefijo" style="width: 40px">
+                    <h:outputText value="#{m.prefijo}"/>
+                </p:column>
+                <p:column headerText="Sufijo" style="width: 40px">
+                    <h:outputText value="#{m.sufijo}"/>
+                </p:column>
+                <p:column headerText="Sim." style="width: 40px">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{m.simbolo}"/>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:inputText value="#{m.simbolo}"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                <p:column headerText="Simbolo">
+                    <p:rowEditor/>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
+
