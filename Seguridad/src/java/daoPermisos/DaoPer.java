@@ -696,6 +696,7 @@ public class DaoPer {
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
                 Monedas moneda = new Monedas();
+                moneda.setIdMoneda(rs.getInt("idMoneda"));
                 moneda.setMoneda(rs.getString("moneda"));
                 moneda.setCodigoIso(rs.getString("codigoIso"));
                 moneda.setPrefijoUnidad(rs.getString("prefijoUnidad"));
@@ -708,5 +709,37 @@ public class DaoPer {
             cn.close();
         }
         return monedas;
+    }
+
+    public void ActualizarMonedas(int idMoneda, Monedas m) throws SQLException {
+        String sql = "UPDATE monedas set moneda='" + m.getMoneda()
+                + "',codigoIso='" + m.getCodigoIso()
+                + "',prefijoUnidad='" + m.getPrefijoUnidad()
+                + "',prefijo='" + m.getPrefijo()
+                + "',sufijo='" + m.getSufijo()
+                + "',simbolo='" + m.getSimbolo()
+                + "'WHERE idMoneda=" + m.getIdMoneda();
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            st.executeQuery(sql);
+        } finally {
+            cn.close();
+        }
+    }
+
+    public void guardarMonedas(Monedas monedas) throws SQLException {
+        String sql = "INSERT INTO monedas(moneda, codigoIso, prefijoUnidad, prefijo, sufijo, simbolo) "
+                + "VALUES('" + monedas.getMoneda() + "','" + monedas.getCodigoIso() + "','"
+                + monedas.getPrefijoUnidad() + "','" + monedas.getPrefijo() + "','" + monedas.getSufijo() + "','" + monedas.getSimbolo() + "')";
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            st.executeUpdate(sql);
+        } finally {
+            cn.close();
+        }
+
+
     }
 }

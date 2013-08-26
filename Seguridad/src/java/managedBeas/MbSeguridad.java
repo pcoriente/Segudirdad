@@ -88,6 +88,8 @@ public class MbSeguridad implements Serializable {
         this.setAparecerSubMenu(0);
     }
 
+    
+
     public void limpiarModulos() {
         ArrayList<SelectItem> selectItem = new ArrayList<>();
         ModuloSubMenu m = new ModuloSubMenu();
@@ -668,7 +670,12 @@ public class MbSeguridad implements Serializable {
     }
 
     public void dameValoresTablaMonedas(RowEditEvent event) {
-        Monedas m = (Monedas) event.getObject();
-        mbMonedas.getMonedas().getSimbolo();
+        try {
+            DaoPer daoPermisos = new DaoPer();
+            Monedas m = (Monedas) event.getObject();
+            daoPermisos.ActualizarMonedas(m.getIdMoneda(), m);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

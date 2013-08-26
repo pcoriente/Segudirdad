@@ -12,8 +12,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -27,6 +30,54 @@ public class MbMonedas implements Serializable {
     ArrayList<Monedas> tablaMonedas = new ArrayList<Monedas>();
 
     public MbMonedas() {
+        DaoPer daoPermisos = new DaoPer();
+        try {
+            tablaMonedas = daoPermisos.dameTablaMOnedas();
+        } catch (SQLException ex) {
+            Logger.getLogger(MbMonedas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void guardarMonedas() {
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage msg = null;
+        boolean loggedIn = false;
+        if (getMonedas().getMoneda().equals("") && getMonedas().getCodigoIso().equals("") && getMonedas().getPrefijoUnidad().equals("") && getMonedas().getPrefijo().equals("") && getMonedas().getSufijo().equals("") && getMonedas().getSimbolo().equals("")) {
+            loggedIn = false;
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Llene todos los campos");
+        } else if (getMonedas().getMoneda().equals("")) {
+            loggedIn = false;
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Escriba una Moneda");
+        } else if (getMonedas().getCodigoIso().equals("")) {
+            loggedIn = false;
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Escriba un Codigo Iso");
+        } else if (getMonedas().getPrefijoUnidad().equals("")) {
+            loggedIn = false;
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Escriba un Prefijo Unidad");
+        } else if (getMonedas().getPrefijo().equals("")) {
+            loggedIn = false;
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Escriba un Prefijo");
+        } else if (getMonedas().getSufijo().equals("")) {
+            loggedIn = false;
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Escriba un Sufijo");
+        } else if (getMonedas().getSimbolo().equals("")) {
+            loggedIn = false;
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Escriba un Simbolo");
+        } else {
+            DaoPer daoPermisos = new DaoPer();
+            try {
+                daoPermisos.guardarMonedas(this.getMonedas());
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Nuevas Monedas Disponibles");
+                loggedIn = true;
+                tablaMonedas = daoPermisos.dameTablaMOnedas();
+                Monedas moneda= new Monedas();
+                this.setMonedas(moneda);
+            } catch (SQLException ex) {
+                Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        context.addCallbackParam("loggedIn", loggedIn);
     }
 
     public Monedas getMonedas() {
@@ -38,18 +89,10 @@ public class MbMonedas implements Serializable {
     }
 
     public ArrayList<Monedas> getTablaMonedas() {
-        DaoPer daoPermisos = new DaoPer();
-        try {
-            tablaMonedas = daoPermisos.dameTablaMOnedas();
-        } catch (SQLException ex) {
-            Logger.getLogger(MbMonedas.class.getName()).log(Level.SEVERE, null, ex);
-        }
         return tablaMonedas;
     }
 
     public void setTablaMonedas(ArrayList<Monedas> tablaMonedas) {
         this.tablaMonedas = tablaMonedas;
     }
-
-  
 }

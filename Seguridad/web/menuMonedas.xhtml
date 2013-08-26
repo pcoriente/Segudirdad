@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <div style="width: 950px; margin: auto">
+                <p:growl id="growl" showDetail="true" life="3000" />
+                <h:graphicImage  library="images" name="encabezado.jpg" /> 
+                <center>
+                    <p:menubar>  
+                        <p:menuitem value="Seguridad" icon="ui-icon-locked" url="altasPermisos.xhtml" />
+                        <p:menuitem  icon="ui-icon-home"  url="index.xhtml"/>
+                        <p:menuitem  icon="ui-icon-plus"  onclick="monedas.show();"/>
+                    </p:menubar> 
+                    <p:dataTable id="tablaMonedas"
+                                 value="#{mbSeguridad.mbMonedas.tablaMonedas}"
+                                 var="m" 
+                                 style="width: 950px"
+                                 editable="true"
+                                 scrollable="true"
+                                 scrollHeight="390">
+                        <f:facet name="header">  
+                            Mantenimiento Monedas  
+                        </f:facet>
+                        <p:ajax event="rowEdit" 
+                                listener="#{mbSeguridad.dameValoresTablaMonedas}"
+                                />
+                        <p:column headerText="Moneda" style="width: 250px">
+                            <h:outputText value="#{m.moneda}"/>
+                        </p:column>
+                        <p:column headerText="Iso" style="width: 30px">
+                            <h:outputText value="#{m.codigoIso}"/>
+                        </p:column>
+                        <p:column headerText="Prefijo Unidad" style="width: 150px">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{m.prefijoUnidad}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText style="width: 150px" value="#{m.prefijoUnidad}"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Prefijo" style="width: 150px">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{m.prefijo}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText style="width: 150px" value="#{m.prefijo}"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Sufijo" style="width: 90px">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{m.sufijo}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText style="width: 90px" value="#{m.sufijo}"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Sim." style="width: 40px">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{m.simbolo}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText style="width: 60px" value="#{m.simbolo}"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Actualizar">
+                            <p:rowEditor/>
+                        </p:column>
+                    </p:dataTable>
+                </center>
+            </div>
+            <p:dialog widgetVar="monedas">
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Moneda: "/>
+                    <p:inputText value="#{mbSeguridad.mbMonedas.monedas.moneda}"/>
+                    <p:outputLabel value="Codigo Iso: "/>
+                    <p:inputText value="#{mbSeguridad.mbMonedas.monedas.codigoIso}"/>
+                    <p:outputLabel value="Prefijo Unidad: "/>
+                    <p:inputText value="#{mbSeguridad.mbMonedas.monedas.prefijoUnidad}"/>
+                    <p:outputLabel value="Prefijo: "/>
+                    <p:inputText value="#{mbSeguridad.mbMonedas.monedas.prefijo}"/>
+                    <p:outputLabel value="Sufijo: "/>
+                    <p:inputText value="#{mbSeguridad.mbMonedas.monedas.sufijo}"/>
+                    <p:outputLabel value="Simbolo: "/>
+                    <p:inputText value="#{mbSeguridad.mbMonedas.monedas.simbolo}"/>
+                    <p:commandButton actionListener="#{mbMonedas.guardarMonedas()}"
+                                     value="Guardar"
+                                     oncomplete="altasMonedas(xhr, status, args);" 
+                                     update="tablaMonedas growl"
+                                     />
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
+        <script type="text/javascript">
+                            function altasMonedas(xhr, status, args) {
+                                if (args.validationFailed || !args.loggedIn) {
+                                    monedas.jq.effect("shake", {times: 5}, 100);
+                                }
+                                else {
+                                    monedas.hide();
+                                }
+                            }
+        </script>
+    </h:body>
+</html>
+

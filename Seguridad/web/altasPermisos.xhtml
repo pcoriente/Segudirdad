@@ -28,9 +28,8 @@
                                 <p:menuitem value="Asignar Perfil Usuario" onclick="usuarios.show();" update="listaPerfil" icon="ui-icon-document" actionListener="#{mbSeguridad.limpiarPerfil()}"/>  
                             </p:submenu> 
                             <p:submenu  icon="ui-icon-gear"> 
-                                <p:menuitem value="Monedas"  oncomplete="monedas.show();" icon="ui-icon-document" />  
+                                <p:menuitem  value="Monedas" icon="ui-icon-document"  url="menuMonedas.xhtml"/>
                             </p:submenu> 
-
                             <p:menuitem  icon="ui-icon-home"  url="index.xhtml"/>
                         </p:menubar> 
                         <!--<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true"/>-->
@@ -312,7 +311,7 @@
                 </p:dialog>
 
 
-                
+
             </div>
         </h:form>
         <script type="text/javascript">
