@@ -53,6 +53,4 @@ public class Utilerias {
         return validar;
     }
 
-    public void x() {
-    }
 }
