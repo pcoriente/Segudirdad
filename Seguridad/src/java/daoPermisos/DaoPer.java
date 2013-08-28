@@ -739,7 +739,5 @@ public class DaoPer {
         } finally {
             cn.close();
         }
-
-
     }
 }
