@@ -20,7 +20,7 @@
                             <p:submenu  icon="ui-icon-wrench"> 
                                 <p:menuitem  value="Modulos" 
                                              actionListener="#{mbSeguridad.cargarDatos()}"
-                                             onclick="modulo.show();" 
+                                             oncomplete="modulo.show();" 
                                              icon="ui-icon-document" 
                                              process="@this"
                                              update="modulo url"/>  
@@ -42,8 +42,8 @@
                                 <f:converter converterId="traerBd"/>
                                 <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
                                         event="change" 
-                                        update="PickAcciones  Menu"
-                                        process="@this listaPerfiles modulos perfilNom"/>
+                                        update="Menu"
+                                        process="@this listaPerfiles perfilNom"/>
 
                             </p:selectOneMenu>
                             <p:commandButton icon="ui-icon-plus" 
@@ -58,8 +58,8 @@
                                 <f:converter converterId="traerPerfil"/>
                                 <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
                                         event="change" 
-                                        update="PickAcciones  Menu  perfilNom"
-                                        process="@this modulos listaBd"/>
+                                        update="Menu  perfilNom"
+                                        process="@this listaBd"/>
                             </p:selectOneMenu>
 
                             <p:commandButton icon="ui-icon-plus" 
@@ -69,39 +69,18 @@
                                              process="@this listaPerfiles"  
                                              onclick="perfil.show();"
                                              />
-                            <p:outputLabel>Modulo:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p:outputLabel>
-                            <p:selectOneMenu 
-                                id="modulos" 
-                                style="width: 230px"
-                                value="#{mbSeguridad.mbModulos.moduloCmb}">
-                                <f:selectItems value="#{mbSeguridad.mbModulos.listaModulos}"/>
-                                <f:converter converterId="traerModulos"/>
-                                <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
-                                        event="change" 
-                                        update="PickAcciones Menu perfilNom"
-                                        process="@this listaPerfiles listaBd"/>
-                            </p:selectOneMenu>
-                            <p:commandButton icon="ui-icon-plus" 
-                                             style="height: 33px; width: 20px"
-                                             oncomplete="modulo.show();" 
-                                             process="@this modulos"
-                                             actionListener="#{mbSeguridad.cargarDatos()}"
-                                             update="panelPrincipal PickAcciones "
-                                             />
+                            
                         </h:panelGrid>
-                        <p:pickList  
-                            id="PickAcciones"
-                            style="width: 200px"
-                            effect="slide"
-                            value="#{mbSeguridad.mbAcciones.pickAcciones}"
-                            var="ListaAcciones"
-                            itemLabel="#{ListaAcciones}"
-                            itemValue="#{ListaAcciones}"
-                            >
-                            <f:facet name="sourceCaption">Disponibles</f:facet>
-                            <f:facet name="targetCaption">Seleccionados</f:facet>
-                            <f:converter converterId="traerAcciones"/>
-                        </p:pickList>
+                        <p:treeTable id="datosModulosAcciones"
+                                     style="border-color: white"
+                                     value="#{mbSeguridad.mbTreTable.nodos}"
+                                     var="nodos"
+                                     selection="#{mbSeguridad.mbTreTable.nodosSeleccionados}"
+                                     selectionMode="checkbox">
+                            <p:column>
+                                <h:outputText value="#{nodos}"/>
+                            </p:column>
+                        </p:treeTable>
                         <p:commandButton 
                             id="btnGuardar"
                             value="Guardar"
@@ -112,7 +91,7 @@
                         <p:commandButton
                             value="Cancelar"
                             action="#{mbSeguridad.cancelarUsuarioPerfil()}"
-                            update="growl modulos listaPerfiles listaBd PickAcciones Menu"
+                            update="growl listaPerfiles listaBd Menu"
                             icon="ui-icon-cancel"
                             />
                     </p:panel>
@@ -188,7 +167,7 @@
                         icon="ui-icon-disk"
                         value="Guardar"
                         action="#{mbSeguridad.guardarValoresModulo()}" 
-                        update="panelPrincipal growl modulos Menu"
+                        update="panelPrincipal growl Menu datosModulosAcciones subMenus"
                         oncomplete="altasModulo(xhr, status, args);">
                     </p:commandButton> 
                     <br></br>
@@ -238,7 +217,7 @@
                     <p:commandButton value="Guardar" 
                                      icon="ui-icon-disk"
                                      action="#{mbSeguridad.guardarPerfil()}"
-                                     update="growl listaPerfiles nombrePerfil  Menu PickAcciones perfilNom"
+                                     update="growl listaPerfiles nombrePerfil  Menu perfilNom"
                                      oncomplete="altasPerfiles(xhr, status, args);"/>
                 </p:dialog>
                 <p:dialog  modal="true" 
@@ -257,7 +236,7 @@
                     <p:commandButton   value="Guardar" 
                                        icon="ui-icon-disk"
                                        actionListener="#{mbSeguridad.guardarAcciones()}"
-                                       update="PickAcciones accion idBoton  modulos growl"
+                                       update="accion idBoton growl"
                                        oncomplete="altasAcciones(xhr, status, args);"/>
 
                 </p:dialog>

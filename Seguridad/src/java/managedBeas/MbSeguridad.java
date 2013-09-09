@@ -8,24 +8,36 @@ import daoPermisos.DaoPer;
 import dominios.Accion;
 import dominios.BaseDato;
 import dominios.Modulo;
-import dominios.ModuloMenu;
 import dominios.ModuloSubMenu;
 import dominios.Monedas;
 import dominios.UsuarioPerfil;
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
+import net.sf.jasperreports.engine.util.JRLoader;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.RowEditEvent;
+import org.primefaces.model.TreeNode;
 import utilerias.Utilerias;
 
 /**
@@ -43,6 +55,8 @@ public class MbSeguridad implements Serializable {
     private MbMonedas mbMonedas = new MbMonedas();
     @ManagedProperty(value = "#{mbUsuarios}")
     private MbUsuarios mbUsuarios = new MbUsuarios();
+    @ManagedProperty(value = "#{mbTreeTable}")
+    private MbTreeTable mbTreTable = new MbTreeTable();
     @ManagedProperty(value = "#{mbAcciones}")
     private MbAcciones mbAcciones = new MbAcciones();
     @ManagedProperty(value = "#{mbModulos}")
@@ -88,16 +102,14 @@ public class MbSeguridad implements Serializable {
         this.setAparecerSubMenu(0);
     }
 
-    
-
-    public void limpiarModulos() {
-        ArrayList<SelectItem> selectItem = new ArrayList<>();
-        ModuloSubMenu m = new ModuloSubMenu();
-        m.setIdSubMenu(0);
-        m.setSubMenu("Seleccione un SubMenus");
-        selectItem.add(new SelectItem(m, m.getSubMenu()));
-        mbModulos.setModuloSubMenuCmb2(selectItem);
-    }
+//    public void limpiarModulos() {
+//        ArrayList<SelectItem> selectItem = new ArrayList<>();
+//        ModuloSubMenu m = new ModuloSubMenu();
+//        m.setIdSubMenu(0);
+//        m.setSubMenu("Seleccione un SubMenus");
+//        selectItem.add(new SelectItem(m, m.getSubMenu()));
+//        mbModulos.setModuloSubMenuCmb2(selectItem);
+//    }
 
     public void controlSubMenu() {
         if (mbModulos.getModuloMenucmb23().getIdMenu() > 0) {
@@ -166,21 +178,33 @@ public class MbSeguridad implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Seleccione una Base de Datos"));
         } else if (mbPerfiles.getPerfil().getIdPerfil() == 0) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Seleccione un perfil"));
-        } else if (mbModulos.getModuloCmb().getIdModulo() == 0) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Seleccione un Modulo"));
         } else {
+
+            ArrayList<Accion> accion = new ArrayList<>();
+            for (TreeNode n : mbTreTable.getNodosSeleccionados()) {
+                try {
+                    Modulo m = (Modulo) n.getData();
+                    m.getIdModulo();
+                } catch (Exception e) {
+                    Accion ac = (Accion) n.getData();
+                    accion.add(ac);
+                    ac.getIdAccion();
+                }
+            }
+
             mbPerfiles.getPerfilCmb().getIdUsuario();
-            ArrayList<Accion> acciones = new ArrayList<Accion>();
-            acciones = (ArrayList<Accion>) mbAcciones.getPickAcciones().getTarget();
+//            ArrayList<Accion> acciones = new ArrayList<Accion>();
+//            acciones = (ArrayList<Accion>) mbAcciones.getPickAcciones().getTarget();
             UsuarioPerfil usuaPerfil = new UsuarioPerfil();
             String jndi = mbBasesDatos.getBaseDatos().getJndi();
             DaoPer daoPermisos = new DaoPer(jndi);
             usuaPerfil.setIdPerfil(mbPerfiles.getPerfilCmb().getIdPerfil());
-            usuaPerfil.setIdModulo(mbModulos.getModuloCmb().getIdModulo());
-            if (usuaPerfil.getIdModulo() != 0 && usuaPerfil.getIdPerfil() != 0) {
-                daoPermisos.insertarUsuarioPerfil(usuaPerfil, acciones);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Se insertaron los datos Correctamente"));
-            }
+//            usuaPerfil.setIdModulo(mbModulos.getModuloCmb().getIdModulo());
+//            if (usuaPerfil.getIdModulo() != 0 && usuaPerfil.getIdPerfil() != 0) {
+            daoPermisos.insertarUsuarioPerfil(usuaPerfil, accion);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Se insertaron los datos Correctamente"));
+//            }
+//            mbTreTable = new MbTreeTable();
         }
     }
 
@@ -327,22 +351,22 @@ public class MbSeguridad implements Serializable {
         } catch (Exception e) {
             mbModulos.getModulo().setIdSubMenu(0);
         }
-        if (mbModulos.getModuloCmb().getIdModulo() > 0) {
-            RequestContext context = RequestContext.getCurrentInstance();
-            FacesMessage msg = null;
-            boolean loggedIn = false;
-            int idModulo = mbModulos.getModuloCmb().getIdModulo();
-            try {
-                daoPermisos.actualizarModulos(mbModulos.getModulo(), idModulo);
-                loggedIn = true;
-                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Modulo Actualizado");
-            } catch (SQLException ex) {
-                loggedIn = false;
-                Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            FacesContext.getCurrentInstance().addMessage(null, msg);
-            context.addCallbackParam("loggedIn", loggedIn);
-        } else {
+//        if (mbModulos.getModuloCmb().getIdModulo() > 0) {
+//            RequestContext context = RequestContext.getCurrentInstance();
+//            FacesMessage msg = null;
+//            boolean loggedIn = false;
+//            int idModulo = mbModulos.getModuloCmb().getIdModulo();
+//            try {
+//                daoPermisos.actualizarModulos(mbModulos.getModulo(), idModulo);
+//                loggedIn = true;
+//                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Modulo Actualizado");
+//            } catch (SQLException ex) {
+//                loggedIn = false;
+//                Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//            FacesContext.getCurrentInstance().addMessage(null, msg);
+//            context.addCallbackParam("loggedIn", loggedIn);
+//        } else {
             RequestContext context = RequestContext.getCurrentInstance();
             FacesMessage msg = null;
             boolean loggedIn = false;
@@ -368,13 +392,15 @@ public class MbSeguridad implements Serializable {
                     mbModulos.getModuloCmb().setIdModulo(id);
                     loggedIn = true;
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Nuevos modulos Disponibles");
+                    mbModulos = new MbModulos();
+                    mbTreTable = new MbTreeTable();
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(MbModulos.class.getName()).log(Level.SEVERE, null, ex);
             }
             FacesContext.getCurrentInstance().addMessage(null, msg);
             context.addCallbackParam("loggedIn", loggedIn);
-        }
+//        }
     }
 
     public void guardarAcciones() throws SQLException {
@@ -586,29 +612,31 @@ public class MbSeguridad implements Serializable {
     }
 
     public void cargarDatos() {
-        mbModulos.getModuloMenucmb23().setIdMenu(mbModulos.getModuloCmb().getIdMenu());
-        mbModulos.getModulo().setModulo(mbModulos.getModuloCmb().getModulo());
-        mbModulos.getModulo().setUrl(mbModulos.getModuloCmb().getUrl());
-        mbModulos.getModuloSubMenuCmb().setIdSubMenu(mbModulos.getModuloCmb().getIdSubMenu());
-        DaoPer daoPermisos = new DaoPer();
-        ArrayList<ModuloSubMenu> moduloSubmenu = new ArrayList<>();
-        if (mbModulos.getModuloCmb().getIdMenu() > 0) {
-            try {
-                ArrayList<SelectItem> arraySelecItem = new ArrayList<>();
-                ModuloSubMenu moduloSubMenu = new ModuloSubMenu();
-                moduloSubMenu.setIdSubMenu(0);
-                moduloSubMenu.setSubMenu("Seleccione un SubMenu");
-                SelectItem select = new SelectItem(moduloSubMenu, moduloSubMenu.getSubMenu());
-                arraySelecItem.add(select);
-                moduloSubmenu = daoPermisos.dameSubMenus(mbModulos.getModuloCmb().getIdMenu());
-                for (ModuloSubMenu m : moduloSubmenu) {
-                    arraySelecItem.add(new SelectItem(m, m.getSubMenu()));
-                }
-                mbModulos.setModuloSubMenuCmb2(arraySelecItem);
-            } catch (SQLException ex) {
-                Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+          mbModulos = new MbModulos();
+//        mbModulos.getModuloMenucmb23().setIdMenu(0);
+//        mbModulos.getModuloMenucmb23().setIdMenu(mbModulos.getModuloCmb().getIdMenu());
+//        mbModulos.getModulo().setModulo(mbModulos.getModuloCmb().getModulo());
+//        mbModulos.getModulo().setUrl(mbModulos.getModuloCmb().getUrl());
+//        mbModulos.getModuloSubMenuCmb().setIdSubMenu(mbModulos.getModuloCmb().getIdSubMenu());
+//        DaoPer daoPermisos = new DaoPer();
+//        ArrayList<ModuloSubMenu> moduloSubmenu = new ArrayList<>();
+//        if (mbModulos.getModuloCmb().getIdMenu() > 0) {
+//            try {
+//                ArrayList<SelectItem> arraySelecItem = new ArrayList<>();
+//                ModuloSubMenu moduloSubMenu = new ModuloSubMenu();
+//                moduloSubMenu.setIdSubMenu(0);
+//                moduloSubMenu.setSubMenu("Seleccione un SubMenu");
+//                SelectItem select = new SelectItem(moduloSubMenu, moduloSubMenu.getSubMenu());
+//                arraySelecItem.add(select);
+//                moduloSubmenu = daoPermisos.dameSubMenus(mbModulos.getModuloCmb().getIdMenu());
+//                for (ModuloSubMenu m : moduloSubmenu) {
+//                    arraySelecItem.add(new SelectItem(m, m.getSubMenu()));
+//                }
+//                mbModulos.setModuloSubMenuCmb2(arraySelecItem);
+//            } catch (SQLException ex) {
+//                Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
     }
 
     public String home() {
@@ -669,6 +697,14 @@ public class MbSeguridad implements Serializable {
         this.mbMonedas = mbMonedas;
     }
 
+    public MbTreeTable getMbTreTable() {
+        return mbTreTable;
+    }
+
+    public void setMbTreTable(MbTreeTable mbTreTable) {
+        this.mbTreTable = mbTreTable;
+    }
+
     public void dameValoresTablaMonedas(RowEditEvent event) {
         try {
             DaoPer daoPermisos = new DaoPer();
@@ -677,5 +713,18 @@ public class MbSeguridad implements Serializable {
         } catch (SQLException ex) {
             Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void reporteMonedas() throws JRException, IOException {
+        String ubicacion = "C:\\Reportes\\monedas.jasper";
+        JasperReport report;
+        report = (JasperReport) JRLoader.loadObjectFromFile(ubicacion); //DEPRECADO
+        JasperPrint jasperPrint = JasperFillManager.fillReport(report, null, new JRBeanCollectionDataSource(mbMonedas.getTablaMonedas()));
+        HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+        httpServletResponse.addHeader("Content-disposition", "attachment; filename=report.pdf");
+        ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
+        JasperExportManager.exportReportToPdfStream(jasperPrint, servletOutputStream);
+        FacesContext.getCurrentInstance().responseComplete();
+
     }
 }

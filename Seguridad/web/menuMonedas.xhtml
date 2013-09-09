@@ -13,10 +13,12 @@
                 <p:growl id="growl" showDetail="true" life="3000" />
                 <h:graphicImage  library="images" name="encabezado.jpg" /> 
                 <center>
+                    <p:commandButton value="Datos" actionListener="#{mbSeguridad.reporteMonedas()}" ajax="false"/>
                     <p:menubar>  
                         <p:menuitem value="Seguridad" icon="ui-icon-locked" url="altasPermisos.xhtml" />
                         <p:menuitem  icon="ui-icon-home"  url="index.xhtml"/>
                         <p:menuitem  icon="ui-icon-plus"  onclick="monedas.show();"/>
+                        <p:menuitem  icon="ui-icon-plus"  actionListener="#{mbSeguridad.reporteMonedas()}" ajax="false"/>
                     </p:menubar> 
                     <p:dataTable id="tablaMonedas"
                                  value="#{mbSeguridad.mbMonedas.tablaMonedas}"

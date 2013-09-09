@@ -319,16 +319,20 @@ public class DaoPer {
 
     public void insertarUsuarioPerfil(UsuarioPerfil usuaPerfil, ArrayList<Accion> acciones) throws SQLException {
         Connection cn = ds.getConnection();
+        PreparedStatement ps = null;
         try {
-            String sqlElimiar = "DELETE FROM usuarioPerfil WHERE idPerfil=" + usuaPerfil.getIdPerfil() + " and idModulo = " + usuaPerfil.getIdModulo();
-            Statement st = cn.createStatement();
-            st.executeUpdate(sqlElimiar);
+            for (int e = 0; e < acciones.size(); e++) {
+                String sqlElimiar = "DELETE FROM usuarioPerfil WHERE idPerfil=" + usuaPerfil.getIdPerfil()
+                        + " and idModulo = " + acciones.get(e).getIdMOdulo();
+                ps = cn.prepareStatement(sqlElimiar);
+                ps.executeUpdate();
+            }
             String sql = "INSERT INTO usuarioPerfil (idPerfil, idModulo, idAccion) VALUES (?,?,?)";
-            PreparedStatement ps = cn.prepareStatement(sql);
+            ps = cn.prepareStatement(sql);
             for (int i = 0; i < acciones.size(); i++) {
                 int idAccion = acciones.get(i).getIdAccion();
                 ps.setInt(1, usuaPerfil.getIdPerfil());
-                ps.setInt(2, usuaPerfil.getIdModulo());
+                ps.setInt(2, acciones.get(i).getIdMOdulo());
                 ps.setInt(3, idAccion);
                 ps.executeUpdate();
             }
