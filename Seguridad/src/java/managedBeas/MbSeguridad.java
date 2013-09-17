@@ -340,51 +340,72 @@ public class MbSeguridad implements Serializable {
     }
 
     public void guardarValoresModulo() {
-        DaoPer daoPermisos = new DaoPer();
-        mbModulos.getModulo().getModulo();
-        mbModulos.getModulo().getUrl();
-        mbModulos.getModulo().setIdMenu(mbModulos.getModuloMenucmb23().getIdMenu());
-        try {
-            mbModulos.getModulo().setIdSubMenu(mbModulos.getModuloSubMenuCmb().getIdSubMenu());
-        } catch (Exception e) {
-            mbModulos.getModulo().setIdSubMenu(0);
-        }
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage msg = null;
         boolean loggedIn = false;
-        try {
-            if (mbModulos.getModulo().getModulo().equals("") && mbModulos.getModulo().getUrl().equals("") && mbModulos.getModulo().getIdMenu() == 0) {
-                loggedIn = false;
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese todas las Opciones");
-            } else if (mbModulos.getModulo().equals("")) {
-                mbModulos.getModulo().setModulo("");
-//              mbSeguridad.mbModulos.modulo.modulo
-                loggedIn = false;
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese un Modulo");
-            } else if (mbModulos.getModulo().getUrl().equals("")) {
-                loggedIn = false;
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese una Url");
-            } else if (mbModulos.getModulo().getIdMenu() == 0) {
-                loggedIn = false;
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Seleccione un Menu Modulo");
-            } else {
-                int id = daoPermisos.guardarModulo(mbModulos.getModulo());
-                mbModulos.getModuloCmb().setIdModulo(id);
-                loggedIn = true;
-                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Nuevos modulos Disponibles");
-                mbModulos = new MbModulos();
-                int idPerfil = mbPerfiles.getPerfilCmb().getIdPerfil();
-                String jndi = mbBasesDatos.getBaseDatos().getJndi();
-                if (idPerfil != 0 && jndi != null) {
-                    mbTreTable = new MbTreeTable(idPerfil, jndi);
-                }
+        if (mbModulos.getModulo().getIdModulo() > 0) {
+            int idSubMenu = 0;
+            try {
+                idSubMenu = mbModulos.getModuloSubMenuCmb().getIdSubMenu();
+            } catch (Exception e) {
+                idSubMenu = 0;
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(MbModulos.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-        context.addCallbackParam("loggedIn", loggedIn);
+            mbModulos.getModulo().setIdMenu(mbModulos.getModuloMenucmb23().getIdMenu());
+            DaoPer daoPermisos = new DaoPer();
+            try {
+                daoPermisos.actualizarModulos(mbModulos.getModulo(), idSubMenu);
+                loggedIn = true;
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Modulo Actualizado exitosamente!");
+            } catch (SQLException ex) {
+                Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } else {
+            DaoPer daoPermisos = new DaoPer();
+            mbModulos.getModulo().getModulo();
+            mbModulos.getModulo().getUrl();
+            mbModulos.getModulo().setIdMenu(mbModulos.getModuloMenucmb23().getIdMenu());
+            try {
+                mbModulos.getModulo().setIdSubMenu(mbModulos.getModuloSubMenuCmb().getIdSubMenu());
+            } catch (Exception e) {
+                mbModulos.getModulo().setIdSubMenu(0);
+            }
+
+            try {
+                if (mbModulos.getModulo().getModulo().equals("") && mbModulos.getModulo().getUrl().equals("") && mbModulos.getModulo().getIdMenu() == 0) {
+                    loggedIn = false;
+                    msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese todas las Opciones");
+                } else if (mbModulos.getModulo().equals("")) {
+                    mbModulos.getModulo().setModulo("");
+//              mbSeguridad.mbModulos.modulo.modulo
+                    loggedIn = false;
+                    msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese un Modulo");
+                } else if (mbModulos.getModulo().getUrl().equals("")) {
+                    loggedIn = false;
+                    msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Ingrese una Url");
+                } else if (mbModulos.getModulo().getIdMenu() == 0) {
+                    loggedIn = false;
+                    msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error", "Seleccione un Menu Modulo");
+                } else {
+                    int id = daoPermisos.guardarModulo(mbModulos.getModulo());
+                    mbModulos.getModuloCmb().setIdModulo(id);
+                    loggedIn = true;
+                    msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Nuevos modulos Disponibles");
+                    mbModulos = new MbModulos();
+                    int idPerfil = mbPerfiles.getPerfilCmb().getIdPerfil();
+                    String jndi = mbBasesDatos.getBaseDatos().getJndi();
+                    if (idPerfil != 0 && jndi != null) {
+                        mbTreTable = new MbTreeTable(idPerfil, jndi);
+                    }
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(MbModulos.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+            context.addCallbackParam("loggedIn", loggedIn);
 //        }
+        }
     }
 
     public void guardarAcciones() throws SQLException {
@@ -725,5 +746,33 @@ public class MbSeguridad implements Serializable {
         JasperExportManager.exportReportToPdfStream(jasperPrint, servletOutputStream);
         FacesContext.getCurrentInstance().responseComplete();
 
+    }
+
+    public void actualizarModulos() {
+        int id = mbModulos.getModulo().getIdMenu();
+
+        DaoPer daoPermisos = new DaoPer();
+        mbModulos.getModuloMenucmb23().setIdMenu(id);
+        ArrayList<SelectItem> selectItem = new ArrayList<>();
+        ArrayList<ModuloSubMenu> moduloSubMenu = new ArrayList<ModuloSubMenu>();
+        ModuloSubMenu subMenu = new ModuloSubMenu();
+        subMenu.setSubMenu("Seleccione un SubMenu");
+        SelectItem st = new SelectItem(subMenu, subMenu.getSubMenu());
+        selectItem.add(st);
+        try {
+            moduloSubMenu = daoPermisos.dameSubMenus();
+            for (ModuloSubMenu s : moduloSubMenu) {
+                selectItem.add(new SelectItem(s, s.getSubMenu()));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        mbModulos.setModuloSubMenuCmb2(selectItem);
+        mbModulos.getModuloSubMenuCmb().setIdSubMenu(mbModulos.getModulo().getIdSubMenu());
+    }
+
+    public void limpiarModulos() {
+        mbModulos = new MbModulos();
+        mbModulos.getModulo().setIdModulo(0);
     }
 }

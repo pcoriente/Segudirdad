@@ -127,6 +127,20 @@
                           widgetVar="modulo" 
                           hideEffect="explode"
                           id="panelModulos">
+                    <p:ajax event="close" listener="#{mbSeguridad.limpiarModulos()}"
+                            update="modulo url moduloMenu subMenus mttModulo"/>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Modulos : "/>
+                        <p:selectOneMenu id="mttModulo" value="#{mbSeguridad.mbModulos.modulo}">
+                            <f:selectItems value="#{mbSeguridad.mbModulos.listaModulos}"/>
+                            <f:converter converterId="traerModulos"/>
+                            <p:ajax event="change"
+                                    update="modulo url moduloMenu subMenus" 
+                                    listener="#{mbSeguridad.actualizarModulos()}"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <p:separator/>
+                    <br/>
                     <h:panelGrid  id="panelPrincipal" columns="3">
                         <p:outputLabel value="Modulo: "/>
                         <p:inputText id="modulo" value="#{mbSeguridad.mbModulos.modulo.modulo}"/>
@@ -294,8 +308,6 @@
                                      oncomplete="modificarUsuarios(xhr, status, args);"/>
                     <p:ajax event="close" update="listaUsuarios listaPerfil" listener="#{mbSeguridad.limpiarModificacionesPerfilUsuario()}"/> 
                 </p:dialog>
-
-
 
             </div>
         </h:form>
