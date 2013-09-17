@@ -10,7 +10,7 @@ import java.io.Serializable;
  *
  * @author Comodoro
  */
-public class Monedas implements Serializable {
+public class Moneda implements Serializable {
 
     private int idMoneda;
     private String moneda;

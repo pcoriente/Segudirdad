@@ -5,7 +5,7 @@
 package managedBeas;
 
 import daoPermisos.DaoPer;
-import dominios.Monedas;
+import dominios.Moneda;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -26,8 +26,8 @@ import org.primefaces.context.RequestContext;
 @SessionScoped
 public class MbMonedas implements Serializable {
 
-    Monedas monedas = new Monedas();
-    ArrayList<Monedas> tablaMonedas = new ArrayList<Monedas>();
+    Moneda monedas = new Moneda();
+    ArrayList<Moneda> tablaMonedas = new ArrayList<Moneda>();
 
     public MbMonedas() {
         DaoPer daoPermisos = new DaoPer();
@@ -70,7 +70,7 @@ public class MbMonedas implements Serializable {
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Nuevas Monedas Disponibles");
                 loggedIn = true;
                 tablaMonedas = daoPermisos.dameTablaMOnedas();
-                Monedas moneda= new Monedas();
+                Moneda moneda= new Moneda();
                 this.setMonedas(moneda);
             } catch (SQLException ex) {
                 Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
@@ -80,19 +80,19 @@ public class MbMonedas implements Serializable {
         context.addCallbackParam("loggedIn", loggedIn);
     }
 
-    public Monedas getMonedas() {
+    public Moneda getMonedas() {
         return monedas;
     }
 
-    public void setMonedas(Monedas monedas) {
+    public void setMonedas(Moneda monedas) {
         this.monedas = monedas;
     }
 
-    public ArrayList<Monedas> getTablaMonedas() {
+    public ArrayList<Moneda> getTablaMonedas() {
         return tablaMonedas;
     }
 
-    public void setTablaMonedas(ArrayList<Monedas> tablaMonedas) {
+    public void setTablaMonedas(ArrayList<Moneda> tablaMonedas) {
         this.tablaMonedas = tablaMonedas;
     }
 }

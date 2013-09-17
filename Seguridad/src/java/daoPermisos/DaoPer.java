@@ -4,6 +4,7 @@
  */
 package daoPermisos;
 
+import com.sun.xml.ws.rx.rm.protocol.CreateSequenceData;
 import dominios.Accion;
 import dominios.BaseDato;
 import dominios.DominioUsuario;
@@ -11,7 +12,8 @@ import dominios.Login;
 import dominios.Modulo;
 import dominios.ModuloMenu;
 import dominios.ModuloSubMenu;
-import dominios.Monedas;
+import dominios.Moneda;
+import dominios.Nivel;
 import dominios.Perfil;
 import dominios.PerfilesAcseso;
 import dominios.TablaAccion;
@@ -162,6 +164,8 @@ public class DaoPer {
                 Modulo modulo = new Modulo();
                 modulo.setIdModulo(rs.getInt("idModulo"));
                 modulo.setModulo(rs.getString("modulo"));
+                modulo.setIdMenu(rs.getInt("idMenu"));
+                modulo.setIdSubMenu(rs.getInt("idSubMenu"));
                 modulos.add(modulo);
             }
         } finally {
@@ -317,22 +321,19 @@ public class DaoPer {
         return p;
     }
 
-    public void insertarUsuarioPerfil(UsuarioPerfil usuaPerfil, ArrayList<Accion> acciones) throws SQLException {
+    public void insertarUsuarioPerfil(UsuarioPerfil usuaPerfil, ArrayList<Nivel> nivel) throws SQLException {
         Connection cn = ds.getConnection();
         PreparedStatement ps = null;
         try {
-            for (int e = 0; e < acciones.size(); e++) {
-                String sqlElimiar = "DELETE FROM usuarioPerfil WHERE idPerfil=" + usuaPerfil.getIdPerfil()
-                        + " and idModulo = " + acciones.get(e).getIdMOdulo();
-                ps = cn.prepareStatement(sqlElimiar);
-                ps.executeUpdate();
-            }
+            String sqlElimiar = "DELETE FROM usuarioPerfil WHERE idPerfil=" + usuaPerfil.getIdPerfil();
+            ps = cn.prepareStatement(sqlElimiar);
+            ps.executeUpdate();
             String sql = "INSERT INTO usuarioPerfil (idPerfil, idModulo, idAccion) VALUES (?,?,?)";
             ps = cn.prepareStatement(sql);
-            for (int i = 0; i < acciones.size(); i++) {
-                int idAccion = acciones.get(i).getIdAccion();
+            for (int i = 0; i < nivel.size(); i++) {
+                int idAccion = nivel.get(i).getIdAccion();
                 ps.setInt(1, usuaPerfil.getIdPerfil());
-                ps.setInt(2, acciones.get(i).getIdMOdulo());
+                ps.setInt(2, nivel.get(i).getIdModulo());
                 ps.setInt(3, idAccion);
                 ps.executeUpdate();
             }
@@ -381,6 +382,23 @@ public class DaoPer {
         }
 
         return acciones;
+    }
+
+    public ArrayList<Accion> dameAccion(int idPerfil) throws SQLException {
+        String sql = "SELECT * FROM usuarioPerfil WHERE idPerfil = " + idPerfil;
+        ArrayList<Accion> listaAcciones = new ArrayList<>();
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+        while (rs.next()) {
+            Accion accion = new Accion();
+            accion.setIdPerfil(rs.getInt("idPerfil"));
+            accion.setIdMOdulo(rs.getInt("idModulo"));
+            accion.setIdAccion(rs.getInt("idAccion"));
+            listaAcciones.add(accion);
+        }
+
+        return listaAcciones;
     }
 
     public ArrayList<Accion> dameListaAcciones(int idAccion) throws SQLException {
@@ -691,15 +709,15 @@ public class DaoPer {
         }
     }
 
-    public ArrayList<Monedas> dameTablaMOnedas() throws SQLException {
-        ArrayList<Monedas> monedas = new ArrayList<>();
+    public ArrayList<Moneda> dameTablaMOnedas() throws SQLException {
+        ArrayList<Moneda> monedas = new ArrayList<>();
         String sql = "SELECT *  FROM monedas";
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
-                Monedas moneda = new Monedas();
+                Moneda moneda = new Moneda();
                 moneda.setIdMoneda(rs.getInt("idMoneda"));
                 moneda.setMoneda(rs.getString("moneda"));
                 moneda.setCodigoIso(rs.getString("codigoIso"));
@@ -715,7 +733,7 @@ public class DaoPer {
         return monedas;
     }
 
-    public void ActualizarMonedas(int idMoneda, Monedas m) throws SQLException {
+    public void ActualizarMonedas(int idMoneda, Moneda m) throws SQLException {
         String sql = "UPDATE monedas set moneda='" + m.getMoneda()
                 + "',codigoIso='" + m.getCodigoIso()
                 + "',prefijoUnidad='" + m.getPrefijoUnidad()
@@ -732,7 +750,7 @@ public class DaoPer {
         }
     }
 
-    public void guardarMonedas(Monedas monedas) throws SQLException {
+    public void guardarMonedas(Moneda monedas) throws SQLException {
         String sql = "INSERT INTO monedas(moneda, codigoIso, prefijoUnidad, prefijo, sufijo, simbolo) "
                 + "VALUES('" + monedas.getMoneda() + "','" + monedas.getCodigoIso() + "','"
                 + monedas.getPrefijoUnidad() + "','" + monedas.getPrefijo() + "','" + monedas.getSufijo() + "','" + monedas.getSimbolo() + "')";
@@ -743,5 +761,67 @@ public class DaoPer {
         } finally {
             cn.close();
         }
+    }
+
+    public ArrayList<ModuloSubMenu> dameSubMenus() throws SQLException {
+        ArrayList<ModuloSubMenu> modulosMenus = new ArrayList<ModuloSubMenu>();
+        String sql = "SELECT * FROM modulosSubMenus";
+        Connection cn = ds.getConnection();
+        PreparedStatement ps = cn.prepareStatement(sql);
+        try {
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                ModuloSubMenu m = new ModuloSubMenu();
+                m.setIdSubMenu(rs.getInt("idSubMenu"));
+                m.setSubMenu(rs.getString("subMenu"));
+                modulosMenus.add(m);
+            }
+        } finally {
+            cn.close();
+        }
+        return modulosMenus;
+    }
+
+    public ArrayList<UsuarioPerfil> dameUsuarioPerfil(UsuarioPerfil usuaPerfil) throws SQLException {
+        ArrayList<UsuarioPerfil> usuarioPerfil = new ArrayList<>();
+        Connection cn = ds.getConnection();
+        String sql = "SELECT * FROM usuarioPerfil WHERE idPerfil=" + usuaPerfil.getIdPerfil();
+        Statement st = cn.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+        while (rs.next()) {
+            UsuarioPerfil us = new UsuarioPerfil();
+            us.setIdAccion(rs.getInt("idAccion"));
+            usuarioPerfil.add(us);
+        }
+        return usuarioPerfil;
+    }
+
+    public ArrayList<Nivel> dameNiveles() throws SQLException {
+         ArrayList<Nivel> listaNiveles = new ArrayList<>();
+        String sql = "SELECT a.idAccion, a.accion, m.idModulo,  m.modulo, \n"
+                + "ISNULL ( sub.idSubMenu, 0 ) as idSubMenu, ISNULL(sub.subMenu,'') AS subMenu, menu.idMenu, menu.menu \n"
+                + "FROM acciones  as a  \n"
+                + "inner Join modulos as m  on m.idModulo = a.idModulo\n"
+                + "left Join modulosSubMenus as sub on  sub.idSubMenu = m.idSubMenu\n"
+                + "INNER JOIN modulosMenus as menu on menu.idMenu = m.idMenu \n"
+                + "order by menu.idMenu, sub.idSubMenu, m.idModulo, a.idAccion";
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+        while(rs.next()){
+            Nivel nivel = new Nivel();
+            nivel.setIdAccion(rs.getInt("idAccion"));
+            nivel.setAccion(rs.getString("accion"));
+            nivel.setIdModulo(rs.getInt("idModulo"));
+            nivel.setModulo(rs.getString("modulo"));
+            nivel.setIdSubMenu(rs.getInt("idSubMenu"));
+            nivel.setSubMenu(rs.getString("subMenu"));
+            nivel.setIdMenu(rs.getInt("idMenu"));
+            nivel.setMenu(rs.getString("menu"));
+            listaNiveles.add(nivel);
+        }
+        
+        return listaNiveles;
     }
 }

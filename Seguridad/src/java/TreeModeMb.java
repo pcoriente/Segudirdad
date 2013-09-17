@@ -6,6 +6,7 @@
 import daoPermisos.DaoPer;
 import dominios.Accion;
 import dominios.Modulo;
+import dominios.ModuloMenu;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -30,10 +31,12 @@ public class TreeModeMb implements Serializable {
     private TreeNode[] nodosSeleccionados;
     private ArrayList<Modulo> listaModulos = new ArrayList<>();
     private ArrayList<Accion> listaAccion = new ArrayList<>();
+    private ArrayList<ModuloMenu> listaMenus = new ArrayList<>();
 
     public TreeModeMb() {
         DaoPer daoPermisos = new DaoPer();
         try {
+            listaMenus = daoPermisos.dameMOdulosMenu();
             listaModulos = daoPermisos.dameModulos();
             listaAccion = daoPermisos.dameAcciones();
             nodos = new DefaultTreeNode("root", nodos);
@@ -97,7 +100,11 @@ public class TreeModeMb implements Serializable {
         }
     }
 
-    public void onNodeSelect(NodeSelectEvent event) {
-        String valor = event.getTreeNode().toString();
+    public ArrayList<ModuloMenu> getListaMenus() {
+        return listaMenus;
+    }
+
+    public void setListaMenus(ArrayList<ModuloMenu> listaMenus) {
+        this.listaMenus = listaMenus;
     }
 }

@@ -24,7 +24,7 @@
                                              icon="ui-icon-document" 
                                              process="@this"
                                              update="modulo url"/>  
-                                <p:menuitem value="Acciones" disabled="#{mbSeguridad.mbModulos.moduloCmb.idModulo== 0}" onclick="acciones.show();" icon="ui-icon-document"/>  
+                                <p:menuitem value="Acciones"  oncomplete="acciones.show();" icon="ui-icon-document"/>  
                                 <p:menuitem value="Asignar Perfil Usuario" onclick="usuarios.show();" update="listaPerfil" icon="ui-icon-document" actionListener="#{mbSeguridad.limpiarPerfil()}"/>  
                             </p:submenu> 
                             <p:submenu  icon="ui-icon-gear"> 
@@ -42,7 +42,7 @@
                                 <f:converter converterId="traerBd"/>
                                 <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
                                         event="change" 
-                                        update="Menu"
+                                        update="Menu datosModulosAcciones"
                                         process="@this listaPerfiles perfilNom"/>
 
                             </p:selectOneMenu>
@@ -58,7 +58,7 @@
                                 <f:converter converterId="traerPerfil"/>
                                 <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
                                         event="change" 
-                                        update="Menu  perfilNom"
+                                        update="Menu  perfilNom datosModulosAcciones"
                                         process="@this listaBd"/>
                             </p:selectOneMenu>
 
@@ -69,7 +69,7 @@
                                              process="@this listaPerfiles"  
                                              onclick="perfil.show();"
                                              />
-                            
+
                         </h:panelGrid>
                         <p:treeTable id="datosModulosAcciones"
                                      style="border-color: white"
@@ -77,6 +77,9 @@
                                      var="nodos"
                                      selection="#{mbSeguridad.mbTreTable.nodosSeleccionados}"
                                      selectionMode="checkbox">
+                            <f:facet name="header">  
+                                Modulos Acciones 
+                            </f:facet> 
                             <p:column>
                                 <h:outputText value="#{nodos}"/>
                             </p:column>
@@ -124,9 +127,6 @@
                           widgetVar="modulo" 
                           hideEffect="explode"
                           id="panelModulos">
-                    <p:ajax event="close" listener="#{mbSeguridad.limpiarModulos()}"
-                            process="@this"
-                            update="panelPrincipal"/>
                     <h:panelGrid  id="panelPrincipal" columns="3">
                         <p:outputLabel value="Modulo: "/>
                         <p:inputText id="modulo" value="#{mbSeguridad.mbModulos.modulo.modulo}"/>
@@ -152,7 +152,7 @@
                                           update="valor"
                                           />
                         <p:outputLabel value="SubMenu:"/>
-                        <p:selectOneMenu id="subMenus" value="#{mbModulos.moduloSubMenuCmb}" 
+                        <p:selectOneMenu id="subMenus" value="#{mbSeguridad.mbModulos.moduloSubMenuCmb}" 
                                          style="width: 210px" >
                             <f:selectItems value="#{mbSeguridad.mbModulos.moduloSubMenuCmb2}"/>
                             <f:converter converterId="traerModulosSubMenus"/>
@@ -167,7 +167,7 @@
                         icon="ui-icon-disk"
                         value="Guardar"
                         action="#{mbSeguridad.guardarValoresModulo()}" 
-                        update="panelPrincipal growl Menu datosModulosAcciones subMenus"
+                        update="panelPrincipal growl Menu datosModulosAcciones subMenus modulos"
                         oncomplete="altasModulo(xhr, status, args);">
                     </p:commandButton> 
                     <br></br>
@@ -228,6 +228,12 @@
                            >
 
                     <h:panelGrid columns="2">
+
+                        <p:outputLabel value="Modulos"/>
+                        <p:selectOneMenu id="modulos" value="#{mbSeguridad.mbModulos.moduloCmb}">
+                            <f:selectItems value="#{mbSeguridad.mbModulos.listaModulos}"/>
+                            <f:converter converterId="traerModulos"/>
+                        </p:selectOneMenu>
                         <p:outputLabel value="Accion"/>
                         <p:inputText id="accion" value="#{mbSeguridad.mbAcciones.acion.accion}" />
                         <p:outputLabel value="Id Boton"/>
@@ -236,7 +242,7 @@
                     <p:commandButton   value="Guardar" 
                                        icon="ui-icon-disk"
                                        actionListener="#{mbSeguridad.guardarAcciones()}"
-                                       update="accion idBoton growl"
+                                       update="accion idBoton growl datosModulosAcciones"
                                        oncomplete="altasAcciones(xhr, status, args);"/>
 
                 </p:dialog>
