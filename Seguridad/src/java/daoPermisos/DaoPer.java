@@ -693,13 +693,13 @@ public class DaoPer {
         }
     }
 
-    public void actualizarModulos(Modulo modulo, int idModulo) throws SQLException {
+    public void actualizarModulos(Modulo modulo) throws SQLException {
         String sql = "UPDATE modulos set modulo='"
                 + modulo.getModulo()
                 + "', url='" + modulo.getUrl()
                 + "', idSubMenu='" + modulo.getIdSubMenu()
                 + "', idMenu='" + modulo.getIdMenu()
-                + "' WHERE idModulo=" + idModulo;
+                + "' WHERE idModulo=" + modulo.getIdModulo();
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {

@@ -211,6 +211,7 @@ public class MbSeguridad implements Serializable {
         mbModulos = new MbModulos();
         mbAcciones = new MbAcciones();
         mbPerfiles = new MbPerfiles();
+        mbTreTable = new MbTreeTable();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cancelado", "Datos Cancelados"));
     }
 
@@ -353,7 +354,7 @@ public class MbSeguridad implements Serializable {
             mbModulos.getModulo().setIdMenu(mbModulos.getModuloMenucmb23().getIdMenu());
             DaoPer daoPermisos = new DaoPer();
             try {
-                daoPermisos.actualizarModulos(mbModulos.getModulo(), idSubMenu);
+                daoPermisos.actualizarModulos(mbModulos.getModulo());
                 loggedIn = true;
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Modulo Actualizado exitosamente!");
             } catch (SQLException ex) {
@@ -402,10 +403,11 @@ public class MbSeguridad implements Serializable {
                 Logger.getLogger(MbModulos.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            FacesContext.getCurrentInstance().addMessage(null, msg);
-            context.addCallbackParam("loggedIn", loggedIn);
+
 //        }
         }
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        context.addCallbackParam("loggedIn", loggedIn);
     }
 
     public void guardarAcciones() throws SQLException {
@@ -435,7 +437,9 @@ public class MbSeguridad implements Serializable {
 //            RequestContext.getCurrentInstance().execute("dlg.hide();");
             int idPerfil = mbPerfiles.getPerfilCmb().getIdPerfil();
             String jndi = mbBasesDatos.getBaseDatos().getJndi();
-            mbTreTable = new MbTreeTable(idPerfil, jndi);
+            if (mbBasesDatos.getBaseDatos().getIdBaseDatos() != 0 && mbPerfiles.getPerfil().getIdPerfil() != 0) {
+                mbTreTable = new MbTreeTable(idPerfil, jndi);
+            }
         }
         FacesContext.getCurrentInstance().addMessage(null, msg);
         context.addCallbackParam("loggedIn", loggedIn);
@@ -474,9 +478,11 @@ public class MbSeguridad implements Serializable {
             mbModulos.getModulo().setModulo(mbModulos.getModuloCmb().getModulo());
         }
         if (mbBasesDatos.getBaseDatos().getIdBaseDatos() == 0) {
+            mbTreTable = new MbTreeTable();
             mbBasesDatos = new MbBasesDatos();
         }
         if (mbPerfiles.getPerfilCmb().getIdPerfil() == 0) {
+            mbTreTable = new MbTreeTable();
             mbPerfiles = new MbPerfiles();
         }
         if (mbModulos.getModuloCmb().getIdModulo() == 0) {
