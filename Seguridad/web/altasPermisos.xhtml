@@ -29,8 +29,9 @@
                             </p:submenu> 
                             <p:submenu  icon="ui-icon-gear"> 
                                 <p:menuitem  value="Monedas" icon="ui-icon-document"  url="menuMonedas.xhtml"/>
+                                <p:menuitem value="Paises" icon="ui-icon-document" url="menuPaises.xhtml"/>
                             </p:submenu> 
-                            <p:menuitem  icon="ui-icon-home"  url="index.xhtml"/>
+                            <p:menuitem  icon="ui-icon-home"  url="index.xhtml" actionListener="#{mbSeguridad.limpiarAplicacion()}"/>
                         </p:menubar> 
                         <!--<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true"/>-->
                         <br></br>
@@ -240,7 +241,9 @@
                            hideEffect="explode"
                            showEffect="explode"
                            >
-
+                    <p:ajax event="close" 
+                            listener="#{mbSeguridad.limpiarAcciones()}"
+                            update="accion idBoton modulos"/>
                     <h:panelGrid columns="2">
 
                         <p:outputLabel value="Modulos"/>

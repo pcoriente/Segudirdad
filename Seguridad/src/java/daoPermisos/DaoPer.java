@@ -14,6 +14,7 @@ import dominios.ModuloMenu;
 import dominios.ModuloSubMenu;
 import dominios.Moneda;
 import dominios.Nivel;
+import dominios.Pais;
 import dominios.Perfil;
 import dominios.PerfilesAcseso;
 import dominios.TablaAccion;
@@ -798,7 +799,7 @@ public class DaoPer {
     }
 
     public ArrayList<Nivel> dameNiveles() throws SQLException {
-         ArrayList<Nivel> listaNiveles = new ArrayList<>();
+        ArrayList<Nivel> listaNiveles = new ArrayList<>();
         String sql = "SELECT a.idAccion, a.accion, m.idModulo,  m.modulo, \n"
                 + "ISNULL ( sub.idSubMenu, 0 ) as idSubMenu, ISNULL(sub.subMenu,'') AS subMenu, menu.idMenu, menu.menu \n"
                 + "FROM acciones  as a  \n"
@@ -809,7 +810,7 @@ public class DaoPer {
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         ResultSet rs = st.executeQuery(sql);
-        while(rs.next()){
+        while (rs.next()) {
             Nivel nivel = new Nivel();
             nivel.setIdAccion(rs.getInt("idAccion"));
             nivel.setAccion(rs.getString("accion"));
@@ -821,7 +822,40 @@ public class DaoPer {
             nivel.setMenu(rs.getString("menu"));
             listaNiveles.add(nivel);
         }
-        
+
         return listaNiveles;
+    }
+
+    public ArrayList<Pais> dameListaPaises() throws SQLException {
+        ArrayList<Pais> listaPais = new ArrayList<>();
+        String sql = "SELECT * FROM paises";
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                Pais pais = new Pais();
+                pais.setIdPais(rs.getInt("idPais"));
+                pais.setPais(rs.getString("pais"));
+                pais.setCodigoPais(rs.getString("codigoIsoPais"));
+                pais.setCodigoNumerico(rs.getString("codigoNumerico"));
+                listaPais.add(pais);
+            }
+        } catch (Exception e) {
+            cn.close();
+        }
+
+        return listaPais;
+    }
+
+    public void actualizarPais(Pais pais) throws SQLException {
+        String sql = "UPDATE paises SET codigoIsoPais = '" + pais.getCodigoPais() + "',codigoNumerico = '" + pais.getCodigoNumerico() + "' where idPais ="+ pais.getIdPais();
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            st.executeUpdate(sql);
+        } finally{
+            cn.close();
+        }
     }
 }

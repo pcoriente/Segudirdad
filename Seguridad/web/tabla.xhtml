@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:dataTable
+                value="#{mbSeguridad.mbMonedas.tablaMonedas}"
+                var="m"
+                rowKey="#{m}"
+                selection="#{mbSeguridad.mbMonedas.m}"
+                selectionMode="single"
+
+                >
+                <p:column>
+                    #{m.moneda}
+                </p:column>
+
+
+
+            </p:dataTable>
+            <p:commandButton value="Visualizar" oncomplete="dlg.show();"
+                             update="tabla"
+                             actionListener="#{mbSeguridad.mbMonedas.llenarArray()}"/>
+            <p:dialog widgetVar="dlg">
+                <p:dataTable id="tabla"
+                             value="#{mbSeguridad.mbMonedas.tablaMonedasTemporal}"
+                             var="detalle"
+                             rowKey="#{detalle}"
+                             selection="#{mbSeguridad.mbMonedas.seleccionFinal}"
+                             selectionMode="single">
+                    <p:column>
+                        #{detalle.moneda}
+                    </p:column>
+                    <p:column>
+                        #{detalle.codigoIso}
+                    </p:column>
+                </p:dataTable>
+                <p:commandButton value="Elegir"
+                                 actionListener="#{mbSeguridad.mbMonedas.AgregarFinalizar()}"
+                                 update="carro"
+                                 oncomplete="dlg.hide();"/>
+            </p:dialog>
+            <p:dataTable value="#{mbSeguridad.mbMonedas.tablaMonedasTemporaCargada}"
+                         var="tabla"
+                         id="carro">
+                <p:column>
+                    #{tabla.moneda}
+                </p:column>
+                <p:column>
+                    #{tabla.codigoIso}
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
+

@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:form id="forma"> 
+            <p:growl id="growl" showDetail="true" life="3000" />
+            <div style="width: 950px; margin: auto">
+                <h:graphicImage  library="images" name="encabezado.jpg" /> 
+                <center>
+                    <p:menubar>  
+                        <p:menuitem value="Seguridad" icon="ui-icon-locked" url="altasPermisos.xhtml" />
+                        <p:menuitem  icon="ui-icon-home"  url="index.xhtml"/>
+                        <p:submenu label="Catalogos">
+                            <p:menuitem  value="Monedas"  url="menuMonedas.xhtml"/>
+                            <p:menuitem value="Paises"  url="menuPaises.xhtml"/>
+                        </p:submenu>
+                    </p:menubar> 
+                    <p:dataTable id="table" value="#{mbSeguridad.mbPais.listaPais}"
+                                 var="pais"
+                                 style="width: 950px"
+                                 editable="true"
+                                 scrollable="true"
+                                 scrollHeight="390">
+
+                        <p:column headerText="Pais" style="width: 250px">
+                            <h:outputText value="#{pais.pais}"/>
+                        </p:column>
+                        <p:column headerText="Codigo Pais">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{pais.codigoPais}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{pais.codigoPais}"/>
+                                </f:facet>
+                            </p:cellEditor>
+
+                        </p:column>
+                        <p:column headerText="Codigo Numerico">
+                            <p:cellEditor>
+                                <f:facet name="output">
+                                    <h:outputText value="#{pais.codigoNumerico}"/>
+                                </f:facet>
+                                <f:facet name="input">
+                                    <p:inputText value="#{pais.codigoNumerico}"/>
+                                </f:facet>
+
+                            </p:cellEditor>
+
+                        </p:column>
+                        <p:column headerText="Actualizar">
+                            <p:rowEditor/>
+                        </p:column>
+
+                        <p:ajax event="rowEdit" 
+                                listener="#{mbSeguridad.dameValoresTablaPaises}"
+                                update=":forma:growl table"
+                                />
+
+                    </p:dataTable>
+                </center>
+            </div>
+        </h:form>
+    </h:body>
+</html>
+

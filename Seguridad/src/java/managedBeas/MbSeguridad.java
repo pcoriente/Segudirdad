@@ -11,6 +11,7 @@ import dominios.Modulo;
 import dominios.ModuloSubMenu;
 import dominios.Moneda;
 import dominios.Nivel;
+import dominios.Pais;
 import dominios.UsuarioPerfil;
 import java.io.IOException;
 import java.io.Serializable;
@@ -27,15 +28,15 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
-import net.sf.jasperreports.engine.util.JRLoader;
+//import net.sf.jasperreports.engine.JRException;
+//import net.sf.jasperreports.engine.JRExporterParameter;
+//import net.sf.jasperreports.engine.JasperExportManager;
+//import net.sf.jasperreports.engine.JasperFillManager;
+//import net.sf.jasperreports.engine.JasperPrint;
+//import net.sf.jasperreports.engine.JasperReport;
+//import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+//import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
+//import net.sf.jasperreports.engine.util.JRLoader;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.TreeNode;
@@ -64,10 +65,22 @@ public class MbSeguridad implements Serializable {
     private MbModulos mbModulos = new MbModulos();
     @ManagedProperty(value = "#{mbPerfiles}")
     private MbPerfiles mbPerfiles = new MbPerfiles();
+    @ManagedProperty(value = "#{mbPaises}")
+    private MbPaises mbPais;
     private ModuloSubMenu sub = new ModuloSubMenu();
     private int aparecer;
     private int aparecerSubMenu;
     private Moneda mone = new Moneda();
+
+    public MbSeguridad() {
+        mbBasesDatos = new MbBasesDatos();
+        mbUsuarios = new MbUsuarios();
+        mbAcciones = new MbAcciones();
+//     mbModulos = new MbModulos();
+        mbPerfiles = new MbPerfiles();
+        mbPais = new MbPaises();
+
+    }
 
     public Moneda getMone() {
         return mone;
@@ -134,15 +147,6 @@ public class MbSeguridad implements Serializable {
 
     public void setSub(ModuloSubMenu sub) {
         this.sub = sub;
-    }
-
-    public MbSeguridad() {
-        mbBasesDatos = new MbBasesDatos();
-        mbUsuarios = new MbUsuarios();
-        mbAcciones = new MbAcciones();
-//     mbModulos = new MbModulos();
-        mbPerfiles = new MbPerfiles();
-
     }
 
     public void actualizarUsuarioPerfil() {
@@ -502,32 +506,6 @@ public class MbSeguridad implements Serializable {
         if (idPerfil != 0 && nomBd != null) {
             String jndi = mbBasesDatos.getBaseDatos().getJndi();
             mbTreTable = new MbTreeTable(idPerfil, jndi);
-//            String perfil = mbPerfiles.getPerfilCmb().getPerfil();
-//            mbPerfiles.getPerfil().setPerfil(perfil);
-//            mbPerfiles.getPerfilCmb().getIdPerfil();
-//            DaoPer daoPermisos = new DaoPer(jndi);
-//            ArrayList<Accion> accion = daoPermisos.dameAccion(idPerfil);
-//            TreeNode nodosSeleccionados = null;
-//            
-//            for (int x = 0; x < accion.size(); x++) {
-//                try {
-//                   
-//                } catch (Exception e) {
-//                }
-//
-//            }
-//            mbTreTable = new MbTreeTable();
-//            mbTreTable.setNodosSeleccionados(nodosSeleccionados);
-//            ArrayList<Accion> acciones = new ArrayList<Accion>();
-//            acciones = daoPermisos.dameValores(nomBd, idModulo, idPerfil);
-//
-//            for (Accion ac : acciones) {
-//                if (ac.getIdPerfil() == 0) {
-//                    mbAcciones.accionesOrigen.add(ac);
-//                } else {
-//                    mbAcciones.accionesDestino.add(ac);
-//                }
-//            }
         }
     }
 
@@ -741,18 +719,18 @@ public class MbSeguridad implements Serializable {
         }
     }
 
-    public void reporteMonedas() throws JRException, IOException {
-        String ubicacion = "C:\\Reportes\\monedas.jasper";
-        JasperReport report;
-        report = (JasperReport) JRLoader.loadObjectFromFile(ubicacion); //DEPRECADO
-        JasperPrint jasperPrint = JasperFillManager.fillReport(report, null, new JRBeanCollectionDataSource(mbMonedas.getTablaMonedas()));
-        HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
-        httpServletResponse.addHeader("Content-disposition", "attachment; filename=report.pdf");
-        ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
-        JasperExportManager.exportReportToPdfStream(jasperPrint, servletOutputStream);
-        FacesContext.getCurrentInstance().responseComplete();
-
-    }
+//    public void reporteMonedas() throws JRException, IOException {
+//        String ubicacion = "C:\\Reportes\\monedas.jasper";
+//        JasperReport report;
+//        report = (JasperReport) JRLoader.loadObjectFromFile(ubicacion); //DEPRECADO
+//        JasperPrint jasperPrint = JasperFillManager.fillReport(report, null, new JRBeanCollectionDataSource(mbMonedas.getTablaMonedas()));
+//        HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+//        httpServletResponse.addHeader("Content-disposition", "attachment; filename=report.pdf");
+//        ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
+//        JasperExportManager.exportReportToPdfStream(jasperPrint, servletOutputStream);
+//        FacesContext.getCurrentInstance().responseComplete();
+//
+//    }
 
     public void actualizarModulos() {
         int id = mbModulos.getModulo().getIdMenu();
@@ -781,4 +759,55 @@ public class MbSeguridad implements Serializable {
         mbModulos = new MbModulos();
         mbModulos.getModulo().setIdModulo(0);
     }
+
+    public void limpiarAcciones() {
+        mbAcciones = new MbAcciones();
+        mbModulos.getModuloCmb().setIdModulo(0);
+    }
+
+    public void dameValoresTablaPaises(RowEditEvent event) {
+        Pais pais = (Pais) event.getObject();
+        DaoPer daoPermisos = new DaoPer();
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage msg = null;
+        boolean loggedIn = false;
+
+        String codigoPais = pais.getCodigoPais().trim();
+        int longitud = codigoPais.length();
+        if (longitud > 3) {
+            loggedIn = false;
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Denegado", "El Codigo Pais no debe de ser mayor de 3!");
+            mbPais = new MbPaises();
+        } else {
+            try {
+                daoPermisos.actualizarPais(pais);
+                loggedIn = true;
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Actualizado", "Actualizacion Exitosa...");
+            } catch (Exception e) {
+                System.err.println(e);
+            }
+        }
+
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        context.addCallbackParam("loggedIn", loggedIn);
+    }
+
+    public void limpiarAplicacion() {
+        MbSeguridad mbSeguridad = new MbSeguridad();
+    }
+
+    public MbPaises getMbPais() {
+        return mbPais;
+    }
+
+    public void setMbPais(MbPaises mbPais) {
+        this.mbPais = mbPais;
+    }
+    
+    public void dameValores(){
+        
+    }
+    
+    
+    
 }

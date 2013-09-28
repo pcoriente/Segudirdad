@@ -28,6 +28,11 @@ public class MbMonedas implements Serializable {
 
     Moneda monedas = new Moneda();
     ArrayList<Moneda> tablaMonedas = new ArrayList<Moneda>();
+    private Moneda m = new Moneda();
+    private Moneda seleccionFinal = new Moneda();
+    ArrayList<Moneda> tablaMonedasTemporal = new ArrayList<Moneda>();
+    ArrayList<Moneda> tablaMonedasTemporaCargada = new ArrayList<Moneda>();
+    
 
     public MbMonedas() {
         DaoPer daoPermisos = new DaoPer();
@@ -70,7 +75,7 @@ public class MbMonedas implements Serializable {
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Nuevas Monedas Disponibles");
                 loggedIn = true;
                 tablaMonedas = daoPermisos.dameTablaMOnedas();
-                Moneda moneda= new Moneda();
+                Moneda moneda = new Moneda();
                 this.setMonedas(moneda);
             } catch (SQLException ex) {
                 Logger.getLogger(MbSeguridad.class.getName()).log(Level.SEVERE, null, ex);
@@ -95,4 +100,48 @@ public class MbMonedas implements Serializable {
     public void setTablaMonedas(ArrayList<Moneda> tablaMonedas) {
         this.tablaMonedas = tablaMonedas;
     }
+
+    public Moneda getM() {
+        return m;
+    }
+
+    public void setM(Moneda m) {
+        this.m = m;
+    }
+
+    public ArrayList<Moneda> getTablaMonedasTemporal() {
+        return tablaMonedasTemporal;
+    }
+
+    public void setTablaMonedasTemporal(ArrayList<Moneda> tablaMonedasTemporal) {
+        this.tablaMonedasTemporal = tablaMonedasTemporal;
+    }
+
+    public void llenarArray() {
+        m.getIdMoneda();
+        tablaMonedasTemporal.add(m);
+    }
+
+    public Moneda getSeleccionFinal() {
+        return seleccionFinal;
+    }
+
+    public void setSeleccionFinal(Moneda seleccionFinal) {
+        this.seleccionFinal = seleccionFinal;
+    }
+    
+    public void AgregarFinalizar(){
+        tablaMonedasTemporaCargada.add(seleccionFinal);    
+    }
+
+    public ArrayList<Moneda> getTablaMonedasTemporaCargada() {
+        return tablaMonedasTemporaCargada;
+    }
+
+    public void setTablaMonedasTemporaCargada(ArrayList<Moneda> tablaMonedasTemporaCargada) {
+        this.tablaMonedasTemporaCargada = tablaMonedasTemporaCargada;
+    }
+    
+    
+    
 }
