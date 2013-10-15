@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:growl id="growl" showDetail="true" life="3000" />
+            <p:panel header="Panel de Administración" style="width: 700px" >
+                <h:panelGrid columns="3">
+                    <p:outputLabel>Base de Datos:</p:outputLabel>
+                    <p:selectOneMenu id="listaBd" style="width: 230px" 
+                                     value="#{mbSeguridad.mbBasesDatos.baseDatos}">
+                        <f:selectItems value="#{mbSeguridad.mbBasesDatos.listaBaseDatos}"/>
+                        <f:converter converterId="traerBd"/>
+                        <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
+                                event="change" 
+                                update="datosModulosAcciones growl"
+                                process="@this"/>
+
+                    </p:selectOneMenu>
+                    <p:commandButton icon="ui-icon-plus" 
+                                     style="height: 33px; width: 20px"
+                                     oncomplete="agregarBds.show();"
+                                     />
+                    <p:outputLabel> Perfiles:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p:outputLabel>
+                    <p:selectOneMenu  
+                        id="listaPerfiles" style="width: 230px"
+                        value="#{mbSeguridad.mbPerfiles.perfilCmb}">
+                        <f:selectItems value="#{mbSeguridad.mbPerfiles.listaPerfiles}" />
+                        <f:converter converterId="traerPerfil"/>
+                        <p:ajax listener="#{mbSeguridad.dameModulosAcciones2(0)}"
+                                event="change" 
+                                update="datosModulosAcciones growl"
+                                process="@this"/>
+                    </p:selectOneMenu>
+
+                    <p:commandButton icon="ui-icon-plus" 
+                                     style="height: 33px; width: 20px"
+                                     actionListener="#{mbSeguridad.limpiarPerfiles()}" 
+                                     process="@this listaPerfiles"  
+                                     onclick="perfil.show();"
+                                     />
+
+                </h:panelGrid>
+                <p:treeTable id="datosModulosAcciones"
+                             style="border-color: white"
+                             value="#{mbSeguridad.mbTreTable.nodos}"
+                             var="nodos"
+                             selection="#{mbSeguridad.mbTreTable.nodosSeleccionados}"
+                             selectionMode="checkbox">
+                    <f:facet name="header">  
+                        Modulos Acciones 
+                    </f:facet> 
+                    <p:column>
+                        <h:outputText value="#{nodos}"/>
+                    </p:column>
+                </p:treeTable>
+                <p:commandButton 
+                    id="btnGuardar"
+                    value="Guardar"
+                    action="#{mbSeguridad.guardarValores()}"
+                    icon="ui-icon-disk"
+                    update="growl"
+                    />
+                <p:commandButton
+                    value="Cancelar"
+                    action="#{mbSeguridad.cancelarUsuarioPerfil()}"
+                    update="growl listaPerfiles listaBd"
+                    icon="ui-icon-cancel"
+                    />
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>

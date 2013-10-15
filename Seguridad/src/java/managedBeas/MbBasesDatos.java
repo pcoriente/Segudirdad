@@ -31,28 +31,28 @@ public class MbBasesDatos implements Serializable {
     private BaseDato baseDatos = new BaseDato();
     private List<SelectItem> listaBaseDatos;
     DualListModel<BaseDato> pickBd = new DualListModel<BaseDato>();
-    ArrayList<BaseDato> DestinoBd = new ArrayList<BaseDato>();
-    ArrayList<BaseDato> OrigenBd = new ArrayList<BaseDato>();
+//    ArrayList<BaseDato> DestinoBd = new ArrayList<BaseDato>();
+//    ArrayList<BaseDato> OrigenBd = new ArrayList<BaseDato>();
 
     public void setPickBd(DualListModel<BaseDato> pickBd) {
         this.pickBd = pickBd;
     }
-
-    public ArrayList<BaseDato> getDestinoBd() {
-        return DestinoBd;
-    }
-
-    public void setDestinoBd(ArrayList<BaseDato> DestinoBd) {
-        this.DestinoBd = DestinoBd;
-    }
-
-    public ArrayList<BaseDato> getOrigenBd() {
-        return OrigenBd;
-    }
-
-    public void setOrigenBd(ArrayList<BaseDato> OrigenBd) {
-        this.OrigenBd = OrigenBd;
-    }
+//
+//    public ArrayList<BaseDato> getDestinoBd() {
+//        return DestinoBd;
+//    }
+//
+//    public void setDestinoBd(ArrayList<BaseDato> DestinoBd) {
+//        this.DestinoBd = DestinoBd;
+//    }
+//
+//    public ArrayList<BaseDato> getOrigenBd() {
+//        return OrigenBd;
+//    }
+//
+//    public void setOrigenBd(ArrayList<BaseDato> OrigenBd) {
+//        this.OrigenBd = OrigenBd;
+//    }
 
     /**
      * Creates a new instance of MbBasesDatos
@@ -145,5 +145,8 @@ public class MbBasesDatos implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, msg);
             context.addCallbackParam("Bd´s", loggedIn);
         }
+    }
+    public void limpiarArray(){
+        pickBd = new DualListModel<BaseDato>();
     }
 }

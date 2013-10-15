@@ -9,6 +9,7 @@ import dominios.BaseDato;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -21,6 +22,7 @@ public class ConverterBd implements Converter {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "EL valor es","El valor es : "+ value));
         int idBaseDatos = Integer.parseInt(value);
         BaseDato bd = new BaseDato();
         DaoPer daoPermisos = new DaoPer();

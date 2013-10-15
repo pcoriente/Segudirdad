@@ -16,8 +16,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 //import org.apache.velocity.runtime.directive.Parse;
 import org.primefaces.component.tree.Tree;
 import org.primefaces.model.DefaultTreeNode;
@@ -48,6 +50,7 @@ public class MbTreeTable implements Serializable {
     }
 
     public MbTreeTable(int idPerfil, String Jndi) {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Entro al metodo MbTreeTable"));
         cargarTreeTable(idPerfil, Jndi);
     }
 

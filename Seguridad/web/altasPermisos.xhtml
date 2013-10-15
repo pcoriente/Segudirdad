@@ -43,8 +43,8 @@
                                 <f:converter converterId="traerBd"/>
                                 <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
                                         event="change" 
-                                        update="Menu datosModulosAcciones"
-                                        process="@this listaPerfiles perfilNom"/>
+                                        update="Menu datosModulosAcciones growl"
+                                        />
 
                             </p:selectOneMenu>
                             <p:commandButton icon="ui-icon-plus" 
@@ -57,10 +57,9 @@
                                 value="#{mbSeguridad.mbPerfiles.perfilCmb}">
                                 <f:selectItems value="#{mbSeguridad.mbPerfiles.listaPerfiles}" />
                                 <f:converter converterId="traerPerfil"/>
-                                <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
+                                <p:ajax listener="#{mbSeguridad.dameModulosAcciones2(0)}"
                                         event="change" 
-                                        update="Menu  perfilNom datosModulosAcciones"
-                                        process="@this listaBd"/>
+                                        update="Menu  perfilNom datosModulosAcciones growl"/>
                             </p:selectOneMenu>
 
                             <p:commandButton icon="ui-icon-plus" 
@@ -279,6 +278,9 @@
                         <f:facet name="targetCaption">Seleccionados</f:facet>
                         <f:converter converterId="traerBdPickListNUevo"/>
                     </p:pickList>
+                    <p:ajax event="close" 
+                            listener="#{mbSeguridad.mbBasesDatos.limpiarArray()}"
+                            update="PickModulos"/>
                     <p:commandButton value="Guardar"
                                      icon="ui-icon-disk"
                                      actionListener="#{mbSeguridad.mbBasesDatos.dameBdsPickList()}"

@@ -10,10 +10,19 @@ import java.io.Serializable;
  *
  * @author Comodoro
  */
-public class Login implements Serializable{
+public class Login implements Serializable {
 
     private String usuario;
     private String password;
+    private String jndi;
+
+    public String getJndi() {
+        return jndi;
+    }
+
+    public void setJndi(String jndi) {
+        this.jndi = jndi;
+    }
 
     public String getUsuario() {
         return usuario;
