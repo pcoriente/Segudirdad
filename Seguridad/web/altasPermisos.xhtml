@@ -166,7 +166,8 @@
                                           update="valor"
                                           />
                         <p:outputLabel value="SubMenu:"/>
-                        <p:selectOneMenu id="subMenus" value="#{mbSeguridad.mbModulos.moduloSubMenuCmb}" 
+                        <p:selectOneMenu id="subMenus"
+                                         value="#{mbSeguridad.mbModulos.moduloSubMenuCmb}" 
                                          style="width: 210px" >
                             <f:selectItems value="#{mbSeguridad.mbModulos.moduloSubMenuCmb2}"/>
                             <f:converter converterId="traerModulosSubMenus"/>
@@ -181,6 +182,7 @@
                         icon="ui-icon-disk"
                         value="Guardar"
                         action="#{mbSeguridad.guardarValoresModulo()}" 
+                        
                         update="panelPrincipal growl Menu datosModulosAcciones subMenus modulos"
                         oncomplete="altasModulo(xhr, status, args);">
                     </p:commandButton> 
@@ -231,7 +233,7 @@
                     <p:commandButton value="Guardar" 
                                      icon="ui-icon-disk"
                                      action="#{mbSeguridad.guardarPerfil()}"
-                                     update="growl listaPerfiles nombrePerfil  Menu perfilNom"
+                                     update="growl listaPerfiles nombrePerfil  Menu perfilNom datosModulosAcciones"
                                      oncomplete="altasPerfiles(xhr, status, args);"/>
                 </p:dialog>
                 <p:dialog  modal="true" 

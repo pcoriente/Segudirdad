@@ -178,10 +178,10 @@ public class MbSeguridad implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Seleccione todas las Opciones"));
         } else if (mbBasesDatos.getBaseDatos().getIdBaseDatos() == 0) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Seleccione una Base de Datos"));
-        } else if (mbPerfiles.getPerfil().getIdPerfil() == 0) {
+        } else if (mbPerfiles.getPerfilCmb().getIdPerfil() == 0) {
+//        else if (mbPerfiles.getPerfil().getIdPerfil() == 0) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Seleccione un perfil"));
         } else {
-
             ArrayList<Nivel> listaNiveles = new ArrayList<>();
             for (TreeNode n : mbTreTable.getNodosSeleccionados()) {
                 try {
@@ -314,6 +314,14 @@ public class MbSeguridad implements Serializable {
                 mbPerfiles.getPerfil().setPerfil(perfil);
                 loggedIn = true;
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Nuevo Perfil Disponible");
+//            ------------------------
+                String nomBd = mbBasesDatos.getBaseDatos().getBaseDatos();
+                if (identity != 0 && nomBd != null) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Entro al change"));
+                    String jndi = mbBasesDatos.getBaseDatos().getJndi();
+                    mbTreTable = new MbTreeTable(identity, jndi);
+                }
+
             }
         }
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -328,9 +336,11 @@ public class MbSeguridad implements Serializable {
             int idSubMenu = 0;
             try {
                 idSubMenu = mbModulos.getModuloSubMenuCmb().getIdSubMenu();
+
             } catch (Exception e) {
                 idSubMenu = 0;
             }
+            mbModulos.getModulo().setIdSubMenu(idSubMenu);
             mbModulos.getModulo().setIdMenu(mbModulos.getModuloMenucmb23().getIdMenu());
             DaoPer daoPermisos = new DaoPer();
             try {
@@ -449,7 +459,7 @@ public class MbSeguridad implements Serializable {
         }
         String nomBd = mbBasesDatos.getBaseDatos().getBaseDatos();
         int idPerfil = 0;
-            idPerfil = mbPerfiles.getPerfilCmb().getIdPerfil();
+        idPerfil = mbPerfiles.getPerfilCmb().getIdPerfil();
         if (idPerfil != 0 && nomBd != null) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Entro al change"));
             String jndi = mbBasesDatos.getBaseDatos().getJndi();

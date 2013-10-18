@@ -4,11 +4,9 @@
  */
 package daoPermisos;
 
-import com.sun.xml.ws.rx.rm.protocol.CreateSequenceData;
 import dominios.Accion;
 import dominios.BaseDato;
 import dominios.DominioUsuario;
-import dominios.Login;
 import dominios.Modulo;
 import dominios.ModuloMenu;
 import dominios.ModuloSubMenu;
@@ -17,9 +15,7 @@ import dominios.Nivel;
 import dominios.Pais;
 import dominios.Perfil;
 import dominios.PerfilesAcseso;
-import dominios.TablaAccion;
 import dominios.UsuarioPerfil;
-import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,12 +24,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.faces.model.SelectItem;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import managedBeas.MbModulos;
 import managedBeas.MbUsuarios;
 import utilerias.Utilerias;
 
@@ -65,7 +59,7 @@ public class DaoPer {
 
     public ArrayList<DominioUsuario> dameUsuarios() throws SQLException {
         ArrayList<DominioUsuario> usuarios = new ArrayList<DominioUsuario>();
-        String sql = "SELECT * FROM usuarios";
+        String sql = "SELECT * FROM usuario";
         Connection cn = ds.getConnection();
         PreparedStatement ps = cn.prepareStatement(sql);
         try {
@@ -745,7 +739,7 @@ public class DaoPer {
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            st.executeQuery(sql);
+            st.executeUpdate(sql);
         } finally {
             cn.close();
         }
